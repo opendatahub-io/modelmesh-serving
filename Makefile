@@ -134,7 +134,7 @@ docker-build: build
 
 # Push the docker image
 docker-push:
-	docker push ${IMG}
+	podman push ${IMG}
 
 # find or download controller-gen
 # download controller-gen if necessary

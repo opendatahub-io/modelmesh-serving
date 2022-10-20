@@ -139,16 +139,20 @@ func (mms *MMService) UpdateConfig(cp *config.ConfigProvider) (*config.Config, b
 			}},
 		}
 		if restPort > 0 {
-			spec.Ports = append(spec.Ports, v1.ServicePort{
-				Name:       "http",
-				Port:       int32(restPort),
-				TargetPort: intstr.FromString("http"),
-			})
-			spec.Ports = append(spec.Ports, v1.ServicePort{
-				Name:       "https",
-				Port:       int32(8443),
-				TargetPort: intstr.FromString("https"),
-			})
+			if enableAuth {
+				spec.Ports = append(spec.Ports, v1.ServicePort{
+					Name:       "http",
+					Port:       int32(8443),
+					TargetPort: intstr.FromString("https"),
+				})
+
+			} else {
+				spec.Ports = append(spec.Ports, v1.ServicePort{
+					Name:       "http",
+					Port:       int32(restPort),
+					TargetPort: intstr.FromString("http"),
+				})
+			}
 		}
 		if mms.headless {
 			spec.ClusterIP = "None"

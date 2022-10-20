@@ -78,7 +78,7 @@ type Deployment struct {
 	Client              client.Client
 }
 
-func (m *Deployment) Apply(ctx context.Context) error {
+func (m *Deployment) Apply(ctx context.Context, enableAuth bool) error {
 	clientParam := m.Client
 
 	m.Log.Info("Applying model mesh deployment", "pods", m.Replicas)

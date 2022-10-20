@@ -125,6 +125,7 @@ func (r *ServiceReconciler) getMMService(namespace string,
 func (r *ServiceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	r.Log.V(1).Info("Service reconciler called", "name", req.NamespacedName)
 
+	enableAuth := true
 	var namespace string
 	var owner metav1.Object
 	if r.NamespaceOwned {
@@ -171,7 +172,7 @@ func (r *ServiceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 	mms, cfg, _ := r.getMMService(namespace, r.ConfigProvider, false)
 
 	var s *corev1.Service
-	svc, err2, requeue := r.reconcileService(ctx, mms, namespace, owner)
+	svc, err2, requeue := r.reconcileService(ctx, mms, namespace, owner, enableAuth)
 	if err2 != nil || requeue {
 		//TODO probably shorter requeue time (immediate?) for service recreate case
 		return RequeueResult, err2
@@ -229,7 +230,7 @@ func (r *ServiceReconciler) tlsConfigFromSecret(ctx context.Context, secretName 
 }
 
 func (r *ServiceReconciler) reconcileService(ctx context.Context, mms *mmesh.MMService,
-	namespace string, owner metav1.Object) (*corev1.Service, error, bool) {
+	namespace string, owner metav1.Object, enableAuth bool) (*corev1.Service, error, bool) {
 	serviceName, target := mms.GetNameAndSpec()
 	if serviceName == "" || target == nil {
 		return nil, errors.New("unexpected state - MMService uninitialized"), false
@@ -259,8 +260,12 @@ func (r *ServiceReconciler) reconcileService(ctx context.Context, mms *mmesh.MMS
 		"app.kubernetes.io/name":       commonLabelValue,
 	}
 
-	annotationsMap := map[string]string{
-		"service.alpha.openshift.io/serving-cert-secret-name": "model-serving-proxy-tls",
+	annotationsMap := map[string]string{}
+
+	if enableAuth {
+		annotationsMap = map[string]string{
+			"service.alpha.openshift.io/serving-cert-secret-name": "model-serving-proxy-tls",
+		}
 	}
 
 	if s == nil {

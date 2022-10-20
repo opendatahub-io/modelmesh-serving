@@ -62,6 +62,10 @@ import (
 	"github.com/kserve/modelmesh-serving/controllers/modelmesh"
 )
 
+const (
+	modelmeshAuthServicePort = 8443
+)
+
 // ServingRuntimeReconciler reconciles a ServingRuntime object
 type ServingRuntimeReconciler struct {
 	client.Client
@@ -224,10 +228,17 @@ func (r *ServingRuntimeReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 		return ctrl.Result{}, fmt.Errorf("Invalid runtime Spec: %w", err)
 	}
 
+	enableAuth := false
+	port := cfg.InferenceServicePort
+	if rt.Annotations["enable-auth"] == "True" {
+		enableAuth = true
+		port = modelmeshAuthServicePort
+	}
+
 	// construct the deployment
 	mmDeployment := modelmesh.Deployment{
 		ServiceName:                cfg.InferenceServiceName,
-		ServicePort:                cfg.InferenceServicePort,
+		ServicePort:                port,
 		Name:                       req.Name,
 		Namespace:                  req.Namespace,
 		Owner:                      owner,
@@ -247,7 +258,7 @@ func (r *ServingRuntimeReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 		PullerImage:                cfg.StorageHelperImage.TaggedImage(),
 		PullerImageCommand:         cfg.StorageHelperImage.Command,
 		PullerResources:            cfg.StorageHelperResources.ToKubernetesType(),
-		Port:                       cfg.InferenceServicePort,
+		Port:                       port,
 		GrpcMaxMessageSize:         cfg.GrpcMaxMessageSizeBytes,
 		// Replicas is set below
 		TLSSecretName:       cfg.TLS.SecretName,
@@ -274,7 +285,7 @@ func (r *ServingRuntimeReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 		return RequeueResult, fmt.Errorf("could not determine replicas: %w", err)
 	}
 	mmDeployment.Replicas = replicas
-	if err = mmDeployment.Apply(ctx); err != nil {
+	if err = mmDeployment.Apply(ctx, enableAuth); err != nil {
 		if errors.IsConflict(err) {
 			// this can occur during normal operations if the deployment was updated
 			// during this reconcile loop

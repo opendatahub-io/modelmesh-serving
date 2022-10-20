@@ -78,7 +78,7 @@ type Deployment struct {
 	Client              client.Client
 }
 
-func (m *Deployment) Apply(ctx context.Context) error {
+func (m *Deployment) Apply(ctx context.Context, enableAuth bool) error {
 	clientParam := m.Client
 
 	m.Log.Info("Applying model mesh deployment", "pods", m.Replicas)
@@ -115,10 +115,8 @@ func (m *Deployment) Apply(ctx context.Context) error {
 			}
 
 			if tErr := m.transform(deployment,
-				m.addVolumesToDeployment,
 				m.addMMDomainSocketMount,
 				m.addPassThroughPodFieldsToDeployment,
-				m.addRuntimeToDeployment,
 				m.syncGracePeriod,
 				m.addMMEnvVars,
 				m.addModelTypeConstraints,
@@ -128,6 +126,13 @@ func (m *Deployment) Apply(ctx context.Context) error {
 				m.configureRuntimePodSpecAnnotations,
 				m.configureRuntimePodSpecLabels,
 				m.ensureMMContainerIsLast,
+			); tErr != nil {
+				return tErr
+			}
+
+			if tErr := m.transformWithAuth(deployment, enableAuth,
+				m.addVolumesToDeployment,
+				m.addRuntimeToDeployment,
 			); tErr != nil {
 				return tErr
 			}
@@ -195,6 +200,15 @@ func (m *Deployment) transform(deployment *appsv1.Deployment, funcs ...func(depl
 	return nil
 }
 
+func (m *Deployment) transformWithAuth(deployment *appsv1.Deployment, enableAuth bool, funcs ...func(deployment *appsv1.Deployment, enableAuth bool) error) error {
+	for _, f := range funcs {
+		if err := f(deployment, enableAuth); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
 func (m *Deployment) addMMDomainSocketMount(deployment *appsv1.Deployment) error {
 	var c *corev1.Container
 	if _, c = findContainer(ModelMeshContainerName, deployment); c == nil {

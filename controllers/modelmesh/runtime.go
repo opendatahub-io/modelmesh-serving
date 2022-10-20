@@ -44,7 +44,8 @@ func (m *Deployment) syncGracePeriod(deployment *appsv1.Deployment) error {
 	return nil
 }
 
-func (m *Deployment) addVolumesToDeployment(deployment *appsv1.Deployment) error {
+func (m *Deployment) addVolumesToDeployment(deployment *appsv1.Deployment, enableAuth bool) error {
+
 	rts := m.SRSpec
 	modelsDirSize := calculateModelDirSize(rts)
 
@@ -81,8 +82,11 @@ func (m *Deployment) addVolumesToDeployment(deployment *appsv1.Deployment) error
 		volumes = append(volumes, storageVolume)
 	}
 
-	deployment.Spec.Template.Spec.Volumes = append(deployment.Spec.Template.Spec.Volumes, volumes...)
-
+	if enableAuth {
+		deployment.Spec.Template.Spec.Volumes = append(deployment.Spec.Template.Spec.Volumes, volumes...)
+	} else {
+		deployment.Spec.Template.Spec.Volumes = volumes
+	}
 	return nil
 }
 
@@ -99,9 +103,9 @@ func calculateModelDirSize(rts *kserveapi.ServingRuntimeSpec) *resource.Quantity
 }
 
 //Adds the provided runtime to the deployment
-func (m *Deployment) addRuntimeToDeployment(deployment *appsv1.Deployment) error {
-	rts := m.SRSpec
+func (m *Deployment) addRuntimeToDeployment(deployment *appsv1.Deployment, enableAuth bool) error {
 
+	rts := m.SRSpec
 	// first prepare the common variables needed for both adapter and other containers
 	lifecycle := &corev1.Lifecycle{
 		PreStop: &corev1.Handler{
@@ -124,6 +128,9 @@ func (m *Deployment) addRuntimeToDeployment(deployment *appsv1.Deployment) error
 		},
 	}
 
+	if !enableAuth {
+		rts.Containers = rts.Containers[:len(rts.Containers)-1]
+	}
 	// Now add the containers specified in serving runtime spec
 	for i := range rts.Containers {
 		// by modifying in-place we rely on the fact that the cacheing

@@ -49,6 +49,7 @@ import (
 	"github.com/kserve/modelmesh-serving/pkg/mmesh"
 
 	"github.com/go-logr/logr"
+	kserveapi "github.com/kserve/kserve/pkg/apis/serving/v1alpha1"
 	monitoringv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -106,13 +107,13 @@ type ServiceReconciler struct {
 }
 
 func (r *ServiceReconciler) getMMService(namespace string,
-	cp *config.ConfigProvider, newConfig bool) (*mmesh.MMService, *config.Config, bool) {
+	cp *config.ConfigProvider, newConfig bool, enableAuth bool) (*mmesh.MMService, *config.Config, bool) {
 	mms, newSvc := r.MMServices.GetOrCreate(namespace, r.tlsConfigFromSecret)
 	if newSvc || newConfig {
 		if newSvc {
 			r.Log.Info("MMService created for namespace", "namespace", namespace)
 		}
-		cfg, changed := mms.UpdateConfig(cp)
+		cfg, changed := mms.UpdateConfig(cp, enableAuth)
 		return mms, cfg, changed
 	}
 	return mms, cp.GetConfig(), false
@@ -124,6 +125,22 @@ func (r *ServiceReconciler) getMMService(namespace string,
 
 func (r *ServiceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	r.Log.V(1).Info("Service reconciler called", "name", req.NamespacedName)
+
+	enableAuth := false
+	servingRuntimesList := &kserveapi.ServingRuntimeList{}
+	err := r.List(context.TODO(), servingRuntimesList, client.InNamespace(req.Namespace))
+	if err != nil {
+		r.Log.Info("Error getting list of Serving Runtimes for namespace")
+	}
+	if len(servingRuntimesList.Items) == 0 {
+		r.Log.Info("No Serving Runtimes found")
+	} else {
+		for _, servingRuntime := range servingRuntimesList.Items {
+			if servingRuntime.Annotations["enable-auth"] == "True" {
+				enableAuth = true
+			}
+		}
+	}
 
 	var namespace string
 	var owner metav1.Object
@@ -168,10 +185,10 @@ func (r *ServiceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 		}
 		owner = d
 	}
-	mms, cfg, _ := r.getMMService(namespace, r.ConfigProvider, false)
+	mms, cfg, _ := r.getMMService(namespace, r.ConfigProvider, false, enableAuth)
 
 	var s *corev1.Service
-	svc, err2, requeue := r.reconcileService(ctx, mms, namespace, owner)
+	svc, err2, requeue := r.reconcileService(ctx, mms, namespace, owner, enableAuth)
 	if err2 != nil || requeue {
 		//TODO probably shorter requeue time (immediate?) for service recreate case
 		return RequeueResult, err2
@@ -229,7 +246,7 @@ func (r *ServiceReconciler) tlsConfigFromSecret(ctx context.Context, secretName 
 }
 
 func (r *ServiceReconciler) reconcileService(ctx context.Context, mms *mmesh.MMService,
-	namespace string, owner metav1.Object) (*corev1.Service, error, bool) {
+	namespace string, owner metav1.Object, enableAuth bool) (*corev1.Service, error, bool) {
 	serviceName, target := mms.GetNameAndSpec()
 	if serviceName == "" || target == nil {
 		return nil, errors.New("unexpected state - MMService uninitialized"), false
@@ -259,8 +276,12 @@ func (r *ServiceReconciler) reconcileService(ctx context.Context, mms *mmesh.MMS
 		"app.kubernetes.io/name":       commonLabelValue,
 	}
 
-	annotationsMap := map[string]string{
-		"service.alpha.openshift.io/serving-cert-secret-name": "model-serving-proxy-tls",
+	annotationsMap := map[string]string{}
+
+	if enableAuth {
+		annotationsMap = map[string]string{
+			"service.alpha.openshift.io/serving-cert-secret-name": "model-serving-proxy-tls",
+		}
 	}
 
 	if s == nil {
@@ -434,7 +455,7 @@ func (r *ServiceReconciler) setupForNamespaceScope(builder *bld.Builder) {
 	})).
 		Watches(&source.Kind{Type: &corev1.ConfigMap{}},
 			config.ConfigWatchHandler(r.ConfigMapName, func() []reconcile.Request {
-				if _, _, changed := r.getMMService(r.ControllerDeployment.Namespace, r.ConfigProvider, true); changed {
+				if _, _, changed := r.getMMService(r.ControllerDeployment.Namespace, r.ConfigProvider, true, false); changed {
 					r.Log.Info("Triggering service reconciliation after config change")
 					return []reconcile.Request{{NamespacedName: r.ControllerDeployment}}
 				}
@@ -465,7 +486,7 @@ func (r *ServiceReconciler) setupForClusterScope(builder *bld.Builder) {
 				requests := make([]reconcile.Request, 0, len(list.Items))
 				for i := range list.Items {
 					if n := &list.Items[i]; modelMeshEnabled(n, r.ControllerDeployment.Namespace) {
-						if _, _, changed := r.getMMService(n.Name, r.ConfigProvider, true); changed {
+						if _, _, changed := r.getMMService(n.Name, r.ConfigProvider, true, false); changed {
 							requests = append(requests, reconcile.Request{
 								NamespacedName: types.NamespacedName{Name: n.Name, Namespace: n.Namespace},
 							})
@@ -475,6 +496,31 @@ func (r *ServiceReconciler) setupForClusterScope(builder *bld.Builder) {
 				return requests
 			}, r.ConfigProvider, &r.Client))
 
+	builder.Watches(&source.Kind{Type: &kserveapi.ServingRuntime{}},
+		handler.EnqueueRequestsFromMapFunc(func(o client.Object) []reconcile.Request {
+			r.Log.Info("Reconcile event triggered by serving runtime: " + o.GetName())
+			sl := &corev1.ServiceList{}
+			err := r.List(context.TODO(), sl, client.HasLabels{"modelmesh-service"}, client.InNamespace(o.GetNamespace()))
+
+			if err != nil {
+				r.Log.Info("Error getting services for namespace")
+				return []reconcile.Request{}
+			}
+			if len(sl.Items) == 0 {
+				r.Log.Info("No services found for Serving Runtime: " + o.GetName())
+				return []reconcile.Request{}
+			}
+			reconcileRequests := make([]reconcile.Request, 0, len(sl.Items))
+			for _, service := range sl.Items {
+				reconcileRequests = append(reconcileRequests, reconcile.Request{
+					NamespacedName: types.NamespacedName{
+						Name:      service.Name,
+						Namespace: service.Namespace,
+					},
+				})
+			}
+			return reconcileRequests
+		}))
 	// Enable ServiceMonitor watch if ServiceMonitorCRDExists
 	if r.ServiceMonitorCRDExists {
 		builder.Watches(&source.Kind{Type: &monitoringv1.ServiceMonitor{}},

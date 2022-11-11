@@ -102,9 +102,9 @@ func main() {
 	}
 
 	// Setup InferenceService controller
-	if err = (&controllers.OpenshiftInferenceServiceReconciler{
+	if err = (&controllers.OpenShiftServingRuntimeReconciler{
 		Client:       mgr.GetClient(),
-		Log:          ctrl.Log.WithName("controllers").WithName("InferenceService"),
+		Log:          ctrl.Log.WithName("controllers").WithName("ServingRuntime"),
 		Scheme:       mgr.GetScheme(),
 		MeshDisabled: getEnvAsBool("MESH_DISABLED", false),
 	}).SetupWithManager(mgr); err != nil {

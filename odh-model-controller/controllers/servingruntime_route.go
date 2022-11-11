@@ -18,7 +18,6 @@ package controllers
 import (
 	"context"
 	predictorv1 "github.com/kserve/modelmesh-serving/apis/serving/v1alpha1"
-	inferenceservicev1 "github.com/kserve/modelmesh-serving/apis/serving/v1beta1"
 	"reflect"
 
 	routev1 "github.com/openshift/api/route/v1"
@@ -37,15 +36,15 @@ const (
 	modelmeshServicePort     = 8008
 )
 
-// NewInferenceServiceRoute defines the desired route object
-func NewInferenceServiceRoute(inferenceservice *inferenceservicev1.InferenceService, enableAuth bool) *routev1.Route {
+// NewServingRuntimeRoute defines the desired route object
+func NewServingRuntimeRoute(servingRuntime *predictorv1.ServingRuntime, enableAuth bool) *routev1.Route {
 
 	finalRoute := &routev1.Route{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      inferenceservice.Name,
-			Namespace: inferenceservice.Namespace,
+			Name:      servingRuntime.Name,
+			Namespace: servingRuntime.Namespace,
 			Labels: map[string]string{
-				"inferenceservice-name": inferenceservice.Name,
+				"servingruntime-name": servingRuntime.Name,
 			},
 		},
 		Spec: routev1.RouteSpec{
@@ -58,7 +57,7 @@ func NewInferenceServiceRoute(inferenceservice *inferenceservicev1.InferenceServ
 				TargetPort: intstr.FromInt(modelmeshServicePort),
 			},
 			WildcardPolicy: routev1.WildcardPolicyNone,
-			Path:           "/v2/models/" + inferenceservice.Name,
+			Path:           "/v2/models/",
 		},
 		Status: routev1.RouteStatus{
 			Ingress: []routev1.RouteIngress{},
@@ -78,8 +77,8 @@ func NewInferenceServiceRoute(inferenceservice *inferenceservicev1.InferenceServ
 	return finalRoute
 }
 
-// CompareInferenceServiceRoutes checks if two routes are equal, if not return false
-func CompareInferenceServiceRoutes(r1 routev1.Route, r2 routev1.Route) bool {
+// CompareServingRuntimeRoutes checks if two routes are equal, if not return false
+func CompareServingRuntimeRoutes(r1 routev1.Route, r2 routev1.Route) bool {
 	// Omit the host field since it is reconciled by the ingress controller
 	r1.Spec.Host, r2.Spec.Host = "", ""
 
@@ -90,51 +89,41 @@ func CompareInferenceServiceRoutes(r1 routev1.Route, r2 routev1.Route) bool {
 
 // Reconcile will manage the creation, update and deletion of the route returned
 // by the newRoute function
-func (r *OpenshiftInferenceServiceReconciler) reconcileRoute(inferenceservice *inferenceservicev1.InferenceService,
-	ctx context.Context, newRoute func(service *inferenceservicev1.InferenceService, enableAuth bool) *routev1.Route) error {
+func (r *OpenShiftServingRuntimeReconciler) reconcileRoute(servingRuntime *predictorv1.ServingRuntime,
+	ctx context.Context, newRoute func(servingRuntime *predictorv1.ServingRuntime, enableAuth bool) *routev1.Route) error {
 	// Initialize logger format
-	log := r.Log.WithValues("inferenceservice", inferenceservice.Name, "namespace", inferenceservice.Namespace)
+	log := r.Log.WithValues("Serving Runtime", servingRuntime.Name, "namespace", servingRuntime.Namespace)
 
 	enableAuth := true
-	desiredServingRuntime := &predictorv1.ServingRuntime{}
-	err := r.Get(ctx, types.NamespacedName{
-		Name:      *inferenceservice.Spec.Predictor.Model.Runtime,
-		Namespace: inferenceservice.Namespace,
-	}, desiredServingRuntime)
-	if err != nil {
-		if apierrs.IsNotFound(err) {
-			log.Info("Serving Runtime ", *inferenceservice.Spec.Predictor.Model.Runtime, " desired by ", inferenceservice.Name, "was not found in namespace")
-		}
-	}
 
-	if desiredServingRuntime.Annotations["enable-auth"] != "True" {
+	if servingRuntime.Annotations["enable-auth"] != "true" {
 		enableAuth = false
 	}
 	createRoute := true
-	if desiredServingRuntime.Annotations["create-route"] != "True" {
+	if servingRuntime.Annotations["enable-route"] != "true" {
 		createRoute = false
 	}
 
 	// Generate the desired route
-	desiredRoute := newRoute(inferenceservice, enableAuth)
+	desiredRoute := newRoute(servingRuntime, enableAuth)
 
 	// Create the route if it does not already exist
 	foundRoute := &routev1.Route{}
 	justCreated := false
-	err = r.Get(ctx, types.NamespacedName{
+	err := r.Get(ctx, types.NamespacedName{
 		Name:      desiredRoute.Name,
-		Namespace: inferenceservice.Namespace,
+		Namespace: servingRuntime.Namespace,
 	}, foundRoute)
 	if err != nil {
 		if !createRoute {
-			log.Info("Serving runtime does not have 'create-route' annotation set to 'True'. Skipping route creation")
+			log.Info("Serving runtime does not have 'enable-route' annotation set to 'true'. Skipping route creation")
 			return nil
 		}
 		if apierrs.IsNotFound(err) {
 			log.Info("Creating Route")
 			// Add .metatada.ownerReferences to the route to be deleted by the
-			// Kubernetes garbage collector if the predictor is deleted
-			err = ctrl.SetControllerReference(inferenceservice, desiredRoute, r.Scheme)
+			// Kubernetes garbage collector if the serving runtime is deleted
+			err = ctrl.SetControllerReference(servingRuntime, desiredRoute, r.Scheme)
 			if err != nil {
 				log.Error(err, "Unable to add OwnerReference to the Route")
 				return err
@@ -153,11 +142,11 @@ func (r *OpenshiftInferenceServiceReconciler) reconcileRoute(inferenceservice *i
 	}
 
 	if !createRoute {
-		log.Info("Serving Runtime does not have 'create-route' annotation set to 'True'. Deleting existing route")
+		log.Info("Serving Runtime does not have 'enable-route' annotation set to 'true'. Deleting existing route")
 		return r.Delete(ctx, foundRoute)
 	}
 	// Reconcile the route spec if it has been manually modified
-	if !justCreated && !CompareInferenceServiceRoutes(*desiredRoute, *foundRoute) {
+	if !justCreated && !CompareServingRuntimeRoutes(*desiredRoute, *foundRoute) {
 		log.Info("Reconciling Route")
 		// Retry the update operation when the ingress controller eventually
 		// updates the resource version field
@@ -165,7 +154,7 @@ func (r *OpenshiftInferenceServiceReconciler) reconcileRoute(inferenceservice *i
 			// Get the last route revision
 			if err := r.Get(ctx, types.NamespacedName{
 				Name:      desiredRoute.Name,
-				Namespace: inferenceservice.Namespace,
+				Namespace: servingRuntime.Namespace,
 			}, foundRoute); err != nil {
 				return err
 			}
@@ -185,7 +174,7 @@ func (r *OpenshiftInferenceServiceReconciler) reconcileRoute(inferenceservice *i
 
 // ReconcileRoute will manage the creation, update and deletion of the
 // TLS route when the predictor is reconciled
-func (r *OpenshiftInferenceServiceReconciler) ReconcileRoute(
-	inferenceservice *inferenceservicev1.InferenceService, ctx context.Context) error {
-	return r.reconcileRoute(inferenceservice, ctx, NewInferenceServiceRoute)
+func (r *OpenShiftServingRuntimeReconciler) ReconcileRoute(
+	servingRuntime *predictorv1.ServingRuntime, ctx context.Context) error {
+	return r.reconcileRoute(servingRuntime, ctx, NewServingRuntimeRoute)
 }

@@ -22,7 +22,6 @@ spec:
     model:
       modelFormat:
         name: onnx
-      runtime: ovms-1.x
       storage:
         key: localMinIO
         path: onnx/mnist.onnx

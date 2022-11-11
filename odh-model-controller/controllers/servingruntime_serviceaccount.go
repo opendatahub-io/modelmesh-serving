@@ -23,7 +23,7 @@ import (
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/types"
 
-	inferenceservicev1 "github.com/kserve/modelmesh-serving/apis/serving/v1beta1"
+	predictorv1 "github.com/kserve/modelmesh-serving/apis/serving/v1alpha1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/util/retry"
@@ -34,11 +34,11 @@ const (
 	modelMeshServiceAccountName = "modelmesh-serving-sa"
 )
 
-func newInferenceServiceSA(inferenceservice *inferenceservicev1.InferenceService) *corev1.ServiceAccount {
+func newServingRuntimeSA(servingRuntime *predictorv1.ServingRuntime) *corev1.ServiceAccount {
 	return &corev1.ServiceAccount{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      modelMeshServiceAccountName,
-			Namespace: inferenceservice.Namespace,
+			Namespace: servingRuntime.Namespace,
 		},
 	}
 }
@@ -63,25 +63,25 @@ func createDelegateClusterRoleBinding(serviceAccountName string, serviceAccountN
 	}
 }
 
-func (r *OpenshiftInferenceServiceReconciler) reconcileSA(inferenceService *inferenceservicev1.InferenceService, ctx context.Context, newSA func(service *inferenceservicev1.InferenceService) *corev1.ServiceAccount) error {
+func (r *OpenShiftServingRuntimeReconciler) reconcileSA(servingRuntime *predictorv1.ServingRuntime, ctx context.Context, newSA func(servingRuntime *predictorv1.ServingRuntime) *corev1.ServiceAccount) error {
 
 	// Initialize logger format
-	log := r.Log.WithValues("inferenceservice", inferenceService.Name, "namespace", inferenceService.Namespace)
+	log := r.Log.WithValues("Serving Runtime", servingRuntime.Name, "namespace", servingRuntime.Namespace)
 
-	desiredSA := newSA(inferenceService)
+	desiredSA := newSA(servingRuntime)
 	foundSA := &corev1.ServiceAccount{}
 
 	err := r.Get(ctx, types.NamespacedName{
 		Name:      desiredSA.Name,
-		Namespace: inferenceService.Namespace,
+		Namespace: servingRuntime.Namespace,
 	}, foundSA)
 
 	if err != nil {
 		if apierrs.IsNotFound(err) {
 			log.Info("Creating Auth Delegation Service Account")
 			// Add .metatada.ownerReferences to the service account to be deleted by the
-			// Kubernetes garbage collector if the predictor is deleted
-			err = ctrl.SetControllerReference(inferenceService, desiredSA, r.Scheme)
+			// Kubernetes garbage collector if the Serving Runtime is deleted
+			err = ctrl.SetControllerReference(servingRuntime, desiredSA, r.Scheme)
 			if err != nil {
 				log.Error(err, "Unable to add OwnerReference to the Auth Delegation Service Account")
 				return err
@@ -112,8 +112,8 @@ func (r *OpenshiftInferenceServiceReconciler) reconcileSA(inferenceService *infe
 		if apierrs.IsNotFound(err) {
 			log.Info("Creating Auth Delegation Cluster Role Binding")
 			// Add .metatada.ownerReferences to the CRB to be deleted by the
-			// Kubernetes garbage collector if the predictor is deleted
-			err = ctrl.SetControllerReference(inferenceService, desiredCRB, r.Scheme)
+			// Kubernetes garbage collector if the Serving Runtime is deleted
+			err = ctrl.SetControllerReference(servingRuntime, desiredCRB, r.Scheme)
 			if err != nil {
 				log.Error(err, "Unable to add OwnerReference to the Auth Delegation Cluster Role Binding")
 				return err
@@ -132,7 +132,7 @@ func (r *OpenshiftInferenceServiceReconciler) reconcileSA(inferenceService *infe
 	}
 
 	// Reconcile the CRB spec if it has been manually modified
-	if !justCreated && !CompareInferenceServiceCRBs(*desiredCRB, *foundCRB) {
+	if !justCreated && !CompareServingRuntimeCRBs(*desiredCRB, *foundCRB) {
 		log.Info("Reconciling Auth Delegation Cluster Role Binding")
 		// Retry the update operation when the ingress controller eventually
 		// updates the resource version field
@@ -158,13 +158,13 @@ func (r *OpenshiftInferenceServiceReconciler) reconcileSA(inferenceService *infe
 }
 
 // ReconcileSA will manage the creation, update and deletion of the auth delegation SA + RBAC
-func (r *OpenshiftInferenceServiceReconciler) ReconcileSA(
-	inferenceservice *inferenceservicev1.InferenceService, ctx context.Context) error {
-	return r.reconcileSA(inferenceservice, ctx, newInferenceServiceSA)
+func (r *OpenShiftServingRuntimeReconciler) ReconcileSA(
+	servingRuntime *predictorv1.ServingRuntime, ctx context.Context) error {
+	return r.reconcileSA(servingRuntime, ctx, newServingRuntimeSA)
 }
 
-// CompareInferenceServiceCRBs checks if two service accounts are equal, if not return false
-func CompareInferenceServiceCRBs(crb1 authv1.ClusterRoleBinding, crb2 authv1.ClusterRoleBinding) bool {
+// CompareServingRuntimeCRBs checks if two service accounts are equal, if not return false
+func CompareServingRuntimeCRBs(crb1 authv1.ClusterRoleBinding, crb2 authv1.ClusterRoleBinding) bool {
 	// Two CRBs will be equal if the role reference and subjects are equal
 	return reflect.DeepEqual(crb1.RoleRef, crb2.RoleRef) &&
 		reflect.DeepEqual(crb1.Subjects, crb2.Subjects)

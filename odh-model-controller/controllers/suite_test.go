@@ -109,9 +109,9 @@ var _ = BeforeSuite(func() {
 	Expect(err).NotTo(HaveOccurred())
 
 	// Setup predictor controller
-	err = (&OpenshiftInferenceServiceReconciler{
+	err = (&OpenShiftServingRuntimeReconciler{
 		Client:       mgr.GetClient(),
-		Log:          ctrl.Log.WithName("controllers").WithName("inferenceservice-controller"),
+		Log:          ctrl.Log.WithName("controllers").WithName("servingruntime-controller"),
 		Scheme:       mgr.GetScheme(),
 		MeshDisabled: false,
 	}).SetupWithManager(mgr)

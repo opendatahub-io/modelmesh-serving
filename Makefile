@@ -17,7 +17,7 @@ ifeq (run,$(firstword $(MAKECMDGOALS)))
 endif
 
 # Container Engine to be used for building images
-ENGINE ?= "docker"
+ENGINE ?= "podman"
 
 # Image URL to use all building/pushing image targets
 IMG ?= kserve/modelmesh-controller:latest

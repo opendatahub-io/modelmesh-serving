@@ -47,7 +47,7 @@ spec:
             - http://0.0.0.0:2379
             - --advertise-client-urls
             - http://0.0.0.0:2379
-          image: http://registry.redhat.io/rhel7/etcd@sha256:d3495b263b103681f1b09a558be43c21989bfc269eb90f84c2609042cebdc626
+          image: quay.io/coreos/etcd:v3.5.4
           name: etcd
           ports:
             - containerPort: 2379
@@ -56,13 +56,6 @@ spec:
             - containerPort: 2380
               name: server
               protocol: TCP
-          resources:  # ref: https://github.com/coreos/etcd-operator/blob/master/doc/user/spec_examples.md#three-member-cluster-with-resource-requirement
-            limits:
-              cpu: 300m
-              memory: 200Mi
-            requests:
-              cpu: 200m
-              memory: 100Mi
 ---
 apiVersion: v1
 kind: Secret
@@ -113,31 +106,8 @@ spec:
               value: AKIAIOSFODNN7EXAMPLE
             - name: MINIO_SECRET_KEY
               value: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
-          resources:
-            requests:
-              cpu: 20m
-              memory: 100Mi
-            limits:
-              cpu: 250m
-              memory: 1Gi
           image: kserve/modelmesh-minio-dev-examples:latest
           name: minio
-          livenessProbe:
-            tcpSocket:
-              port: 9000
-            initialDelaySeconds: 30
-            timeoutSeconds: 1
-            periodSeconds: 5
-            successThreshold: 1
-            failureThreshold: 3
-          readinessProbe:
-            tcpSocket:
-              port: 9000
-            initialDelaySeconds: 5
-            timeoutSeconds: 1
-            periodSeconds: 5
-            successThreshold: 1
-            failureThreshold: 3
 ---
 apiVersion: v1
 kind: Secret

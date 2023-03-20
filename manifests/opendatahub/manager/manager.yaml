@@ -28,6 +28,14 @@ spec:
         control-plane: modelmesh-controller
     spec:
       affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/arch
+                    operator: In
+                    values:
+                      - amd64
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
             - weight: 100
@@ -39,14 +47,6 @@ spec:
                       values:
                         - modelmesh-controller
                 topologyKey: topology.kubernetes.io/zone
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-              - matchExpressions:
-                  - key: kubernetes.io/arch
-                    operator: In
-                    values:
-                      - amd64
       containers:
         - command:
             - /manager
@@ -81,7 +81,7 @@ spec:
               cpu: "1"
               memory: 2Gi
           volumeMounts:
-            - mountPath: /etc/model-serving/config-defaults.yaml
+            - mountPath: /etc/model-serving/config/default
               name: config-defaults
               readOnly: true
           securityContext:
@@ -95,18 +95,3 @@ spec:
           configMap:
             defaultMode: 420
             name: model-serving-config-defaults
----
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    control-plane: modelmesh-controller
-  name: modelmesh-controller
-spec:
-  ports:
-    - protocol: TCP
-      port: 8080
-      targetPort: 8080
-  type: ClusterIP
-  selector:
-    control-plane: modelmesh-controller

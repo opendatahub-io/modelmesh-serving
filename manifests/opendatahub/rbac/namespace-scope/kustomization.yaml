@@ -11,24 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: etcd
-spec:
-  podSelector:
-    matchLabels:
-      component: model-mesh-etcd
-      app.kubernetes.io/part-of: model-mesh
-  ingress:
-    # etcd communication
-    - from:
-        - namespaceSelector:
-            # matches controller and runtime pods
-            matchLabels:
-              modelmesh-enabled: 'true'
-      ports:
-        - port: 2379
-          protocol: TCP
-  policyTypes:
-    - Ingress
+resources:
+  - ../common
+  - role.yaml
+  - role_binding.yaml

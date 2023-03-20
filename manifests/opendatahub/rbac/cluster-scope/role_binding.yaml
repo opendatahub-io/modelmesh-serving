@@ -1,4 +1,4 @@
-# Copyright 2021 IBM Corporation
+# Copyright 2022 IBM Corporation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: modelmesh-controller-rolebinding-$(meshnamespace)
+  name: modelmesh-controller-rolebinding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole

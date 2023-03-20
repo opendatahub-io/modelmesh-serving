@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 apiVersion: serving.kserve.io/v1alpha1
-kind: ServingRuntime
+kind: ClusterServingRuntime
 metadata:
   name: triton-2.x
   labels:
@@ -49,7 +49,7 @@ spec:
 
   containers:
     - name: triton
-      image: nvcr.io/nvidia/tritonserver:21.06.1-py3
+      image: tritonserver-2:replace
       command: [/bin/sh]
       args:
         - -c

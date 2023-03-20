@@ -19,7 +19,7 @@ set -euo pipefail
 CONTEXT_DIR=devbuild
 IMAGE_NAME=kserve/modelmesh-controller-develop
 DEV_DEPS="$0 Dockerfile.develop go.mod go.sum .pre-commit-config.yaml"
-ENGINE=${1:-docker}
+ENGINE=${1:-podman}
 
 # command is shasum on osx
 SHASUM=sha1sum

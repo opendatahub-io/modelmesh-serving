@@ -1,4 +1,4 @@
-# Copyright 2021 IBM Corporation
+# Copyright 2022 IBM Corporation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -171,6 +171,27 @@ rules:
       - serving.kserve.io
     resources:
       - servingruntimes/status
+    verbs:
+      - get
+      - patch
+      - update
+  - apiGroups:
+      - serving.kserve.io
+    resources:
+      - clusterservingruntimes
+      - clusterservingruntimes/finalizers
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - serving.kserve.io
+    resources:
+      - clusterservingruntimes/status
     verbs:
       - get
       - patch

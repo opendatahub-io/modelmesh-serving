@@ -35,7 +35,7 @@ DOCKER_TARGET="runtime"
 DOCKER_TAG="$(git rev-parse --abbrev-ref HEAD)-$(date -u +"%Y%m%dT%H%M%S%Z")"
 CONTROLLER_IMG="kserve/modelmesh-controller"
 DEV_IMAGE="$(cat .develop_image_name)"
-ENGINE="podman"
+ENGINE="docker"
 
 while (("$#")); do
   arg="$1"

@@ -44,7 +44,7 @@ spec:
         app.kubernetes.io/name: modelmesh-controller
         name: {{.ServiceName}}-{{.Name}}
     spec:
-      serviceAccountName: modelmesh-serving-sa
+      serviceAccountName: {{.ServiceAccountName}}
       volumes:
         - name: proxy-tls
           secret:

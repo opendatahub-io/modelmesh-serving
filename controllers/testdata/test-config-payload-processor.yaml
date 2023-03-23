@@ -4,7 +4,7 @@ payloadProcessors:
 inferenceServicePort: 1234
 modelMeshEndpoint: modelmesh-serving
 etcdSecretName: "secret"
-serviceAccountName: ""
+serviceAccountName: "modelmesh-serving-sa"
 podsPerRuntime: 2
 headlessService: true
 modelMeshImage:

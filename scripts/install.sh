@@ -27,6 +27,7 @@ fvt=false
 user_ns_array=
 namespace_scope_mode=false # change to true to run in namespace scope
 modelmesh_serving_image=
+configure_ocp_storage=false
 
 function showHelp() {
   echo "usage: $0 [flags]"
@@ -41,6 +42,7 @@ function showHelp() {
   echo "  -dev, --dev-mode-logging       Enable dev mode logging (stacktraces on warning and no sampling)"
   echo "  --namespace-scope-mode         Run ModelMesh Serving in namespace scope mode"
   echo "  --modelmesh-serving-image      Set a custom modelmesh serving image"
+  echo "  --configure-ocp-storage        Setup resources to allow RWM PVCs for Openshift"
   echo
   echo "Installs ModelMesh Serving CRDs, controller, and built-in runtimes into specified"
   echo "Kubernetes namespaces."
@@ -172,6 +174,9 @@ while (($# > 0)); do
   --namespace-scope-mode)
     namespace_scope_mode=true
     ;;
+  --configure-ocp-storage)
+    configure_ocp_storage=true
+    ;;
   --modelmesh-serving-image)
     shift
     modelmesh_serving_image="$1"
@@ -259,6 +264,21 @@ if [[ $quickstart == "true" ]]; then
   info "Waiting for dependent pods to be up ..."
   wait_for_pods_ready "-l app=etcd"
   wait_for_pods_ready "-l app=minio"
+fi
+
+# For Openshift, if the option is enabled, configure storage class and other options before deploying FVT resources
+if [[ $configure_ocp_storage == "true" ]]; then
+  info "Installing NFS Provisioner"
+  oc new-project nfsprovisioner-operator || oc project nfsprovisioner-operator
+  oc apply -f dependencies/nfsprovisioner-subscription.yaml
+  # wait for operator install 
+  sleep 60
+  oc apply -f dependencies/nfsprovisioner.yaml
+  sleep 15
+  oc patch storageclass nfs -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+  oc patch storageclass gp3 -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}' 
+  # go back to serving namespace
+  oc project $namespace
 fi
 
 # FVT resources

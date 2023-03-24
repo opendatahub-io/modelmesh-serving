@@ -21,7 +21,7 @@ jobs:
           go-version: '1.18.7'
       - name: Setup Minikube
         run: |
-          wget --no-verbose https://github.com/kubernetes/minikube/releases/download/v1.25.1/minikube-linux-amd64
+          wget --no-verbose --no-check-certificate https://github.com/kubernetes/minikube/releases/download/v1.25.1/minikube-linux-amd64
           sudo cp minikube-linux-amd64 /usr/local/bin/minikube
           sudo chmod 755 /usr/local/bin/minikube
           sudo apt-get install -y conntrack socat

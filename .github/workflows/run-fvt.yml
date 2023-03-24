@@ -58,7 +58,7 @@ jobs:
       - name: Install ModelMesh Serving
         run: |
           kubectl create ns modelmesh-serving
-          ./scripts/install.sh --namespace modelmesh-serving --fvt --dev-mode-logging --configure-ocp-storage
+          ./scripts/install.sh --namespace modelmesh-serving --fvt --dev-mode-logging
       - name: Free up disk space
         run: |
           echo "Pruning images"

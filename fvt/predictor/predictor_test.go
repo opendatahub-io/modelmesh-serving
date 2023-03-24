@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+//	http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -1068,7 +1068,7 @@ var _ = Describe("TLS XGBoost inference", Ordered, Serial, func() {
 		FVTClientInstance.UpdateConfigMapTLS(BasicTLSConfig)
 
 		By("Waiting for stable deploy state after UpdateConfigMapTLS")
-		WaitForStableActiveDeployState(time.Second * 20)
+		WaitForStableActiveDeployState(time.Second * 30)
 
 		// load the test predictor object
 		xgboostPredictorObject = NewPredictorForFVT("xgboost-predictor.yaml")
@@ -1115,7 +1115,7 @@ var _ = Describe("TLS XGBoost inference", Ordered, Serial, func() {
 		FVTClientInstance.UpdateConfigMapTLS(MutualTLSConfig)
 
 		By("Waiting for stable deploy state after MutualTLSConfig")
-		WaitForStableActiveDeployState(time.Second * 20)
+		WaitForStableActiveDeployState(time.Second * 30)
 
 		// load the test predictor object
 		xgboostPredictorObject = NewPredictorForFVT("xgboost-predictor.yaml")

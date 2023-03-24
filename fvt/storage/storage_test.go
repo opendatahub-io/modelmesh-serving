@@ -152,7 +152,7 @@ var _ = Describe("ISVCs", func() {
 			// in order to avoid connecting to terminating pod which causes the
 			// port-forward got killed and needs to be re-established (rarely happens)
 			By("Waiting for stable deploy state before connecting gRPC connection")
-			WaitForStableActiveDeployState(time.Second * 10)
+			WaitForStableActiveDeployState(time.Second * 20)
 			By("Connecting to model serving service")
 			err := FVTClientInstance.ConnectToModelServing(Insecure)
 			Expect(err).ToNot(HaveOccurred())

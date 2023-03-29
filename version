@@ -1,0 +1,4 @@
+# Version information
+opendatahub version: latest (branch: main)
+upstream modelmesh version: v0.11.0-alpha
+modelmesh serving version: latest (branch: main)

@@ -44,9 +44,9 @@ do
 
     echo "Waiting 60 secs before retrying"
     sleep 60 
-    fvt_result=$?
     count=$((count+1))
     CONTROLLERNAMESPACE=$controllerns NAMESPACE=$namespace NAMESPACESCOPEMODE=$nsscope make fvt
+    fvt_result=$?
   else
     die "fvt test failed with $count retries"
   fi

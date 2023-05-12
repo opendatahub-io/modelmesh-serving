@@ -48,7 +48,7 @@ if [[ -n $C_MM_CTRL_OPS ]] || [[ -n $C_FULL ]]; then
   kfctl build -V -f ${KFDEF_FILE} -d | oc delete -f -
   oc delete ns ${ctrlnamespace}
   oc delete -f ${MANIFESTS_DIR}/subs_odh_operator.yaml
-  if [[ $(oc get csv |grep opendatahub|awk '{print $1}'|wc -l) == 1 ]];then
+  if [[ $(oc get csv -n openshift-operators |grep opendatahub|awk '{print $1}'|wc -l) == 1 ]];then
     oc delete csv $(oc get csv |grep opendatahub|awk '{print $1}') -n openshift-operators
   fi
 fi

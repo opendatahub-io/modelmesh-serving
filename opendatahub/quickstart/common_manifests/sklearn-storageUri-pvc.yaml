@@ -1,0 +1,13 @@
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  name: example-sklearn-isvc
+  annotations:
+    serving.kserve.io/deploymentMode: ModelMesh
+spec:
+  predictor:
+    model:
+      modelFormat:
+        name: sklearn
+      runtime: mlserver-0.x
+      storageUri: pvc://model-pvc/sklearn/mnist-svm.joblib

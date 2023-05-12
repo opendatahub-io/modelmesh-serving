@@ -117,7 +117,7 @@ if [[ ${repo_uri} == "local" ]]; then
   info "REPO-URI=local is set"
 elif [[ ${repo_uri} == "remote" ]]; then
   info "REPO-URI=remote is set"
-  yq eval 'select(.repos[].uri == "file:///tmp/odh-manifests.gzip") | .repos[].uri = "https://api.github.com/repos/%mm_user%/modelmesh-serving/tarball/%mm_branch%"' < ${KFDEF_FILE} -i
+  sed 's+file:///tmp/odh-manifests.gzip+https://api.github.com/repos/%mm_user%/modelmesh-serving/tarball/%mm_branch%+g' -i ${KFDEF_FILE} 
   sed "s/%mm_user%/${mm_user}/g" -i ${KFDEF_FILE} 
   sed "s/%mm_branch%/${mm_branch}/g" -i ${KFDEF_FILE}
 else

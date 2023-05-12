@@ -24,5 +24,5 @@ spec:
         name: onnx
       runtime: ovms-1.x
       storage:
-        key: aws-connection-minio-data-connection
+        key: localMinIO
         path: onnx/mnist.onnx

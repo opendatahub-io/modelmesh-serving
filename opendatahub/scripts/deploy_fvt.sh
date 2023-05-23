@@ -67,6 +67,19 @@ while (($# > 0)); do
   shift
 done    
 
+info ".. Downloading kustomize"
+if [[ ! -d ${ROOT_DIR}/bin ]]; then
+  info ".. Creating a bin folder"
+  mkdir -p ${ROOT_DIR}/bin
+fi
+
+export KUSTOMIZE_VERSION=4.5.2 
+curl -sSLf --output /tmp/kustomize.tar.gz https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv${KUSTOMIZE_VERSION}/kustomize_v${KUSTOMIZE_VERSION}_linux_amd64.tar.gz
+tar -xvf /tmp/kustomize.tar.gz -C /tmp 
+mv /tmp/kustomize  ${ROOT_DIR}/bin
+chmod a+x  ${ROOT_DIR}/bin
+rm -v /tmp/kustomize.tar.gz
+
 echo "* Start to prepare FVT test environment"
 allowedImgName=false
 if [[ ${img_map} != none ]]; then

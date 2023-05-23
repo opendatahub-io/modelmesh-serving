@@ -22,13 +22,13 @@ function showHelp() {
   echo "  -t, --tag                      (optional) Set tag fast,stable to change images quickly(default none)."
   echo "  -r, --repo-uri                 (optional) Set repo-uri local,remote to change repo uri to use local gzip(default local)."
   echo "  -i, --image                    (optional) Set custom image (default none)."
-  echo "  -p, --stable-manifests       (optional) Use stable manifests. By default, it will use the latest manifests (default false)."
+  echo "  -p, --stable-manifests         (optional) Use stable manifests. By default, it will use the latest manifests (default false)."
   echo "  -op, --operator                (optional) Install opendatahub operator"
   echo "  -u, --user                     (optional) Set odh-manifests repo user to be used for deployment(default opendatahub-io) - modelmesh/odh-modelmesh-controller/modelmesh-runtime-adapter/rest-proxy/odh-model-controller."
   echo "                                   ex) -u opendatahub-io"
   echo "                                   meaning > https://api.github.com/repos/opendatahub-io"
-  echo "  -b, --branch                    (optional) Set odh-manifests repo branch to be used for deployment (default main)."
-  echo "                                 ex) -i rest-proxy=quay.io/opendatahub/rest-proxy:pr-89"
+  echo "  -b, --branch                   (optional) Set odh-manifests repo branch to be used for deployment (default main)."
+  echo "                                   ex) -i rest-proxy=quay.io/opendatahub/rest-proxy:pr-89"
   echo
   echo "Installs modelmesh controller."
 }
@@ -80,6 +80,22 @@ while (($# > 0)); do
   shift
 done    
 
+info ".. Downloading binaries"
+if [[ ! -d ${ROOT_DIR}/bin ]]; then
+  info ".. Creating a bin folder"
+  mkdir -p ${ROOT_DIR}/bin
+fi
+
+curl -sSLf --output /tmp/kfctl.tar.gz   https://github.com/kubeflow/kfctl/releases/download/v1.2.0/kfctl_v1.2.0-0-gbc038f9_linux.tar.gz 
+tar xvf /tmp/kfctl.tar.gz -C /tmp 
+mv /tmp/kfctl ${ROOT_DIR}/bin
+rm -v /tmp/kfctl.tar.gz
+
+curl  -sSLf --output /tmp/yq.tar.gz https://github.com/mikefarah/yq/releases/download/v4.33.3/yq_linux_amd64.tar.gz 
+tar xvf /tmp/yq.tar.gz -C /tmp 
+mv /tmp/yq_linux_amd64 ${ROOT_DIR}/bin/yq
+rm -v /tmp/yq.tar.gz
+
 allowedImgName=false
 if [[ ${img_map} != none ]]; then
   checkAllowedImage ${img_name}
@@ -103,9 +119,11 @@ if [[ ${tag} == "fast" ]]; then
   cp $OPENDATAHUB_DIR/kfdef/kfdef-fast.yaml  ${KFDEF_FILE}
 elif [[ ${tag} == "stable" ]]; then
   info "TAG=stable is set"
+  stable_manifests=true
   cp $OPENDATAHUB_DIR/kfdef/kfdef-stable.yaml  ${KFDEF_FILE}
 elif [[ ${tag} == "none" ]]; then
   info "TAG is NOT set"
+  stable_manifests=true
   cp $OPENDATAHUB_DIR/kfdef/kfdef-local.yaml  ${KFDEF_FILE}
 else
   die "Unknown TAG: ${tag}"  
@@ -160,9 +178,6 @@ if [[ ${odhoperator} == "true" ]]; then
   info ".. Creating the kfdef in ${ctrlnamespace}"
   oc apply -n ${ctrlnamespace} -f ${KFDEF_FILE}
 else
-  info ".. Downloading kfctl"
-  curl -sSLf --output ./kfctl.tar.gz   https://github.com/kubeflow/kfctl/releases/download/v1.2.0/kfctl_v1.2.0-0-gbc038f9_linux.tar.gz ; tar xvf kfctl.tar.gz
-
   info ".. Archiving odh-manifests"
   archive_root_folder=".."
   if [[ ${stable_manifests} == "true" ]]; then
@@ -176,12 +191,14 @@ else
     rm -rf ${archive_folder}/opendatahub/odh-manifests/model-mesh
     info "Move Stable Manifest"
     mv ${archive_folder}/opendatahub/odh-manifests/model-mesh_stable ${archive_folder}/opendatahub/odh-manifests/model-mesh
+  else
+    info "Lastest Manifest will be used"
   fi
   
   cd ${archive_root_folder} ;tar czvf /tmp/odh-manifests.gzip modelmesh-serving/opendatahub/odh-manifests/;cd -
 
   info ".. Deploying ModelMesh by kfctl"
-  ./kfctl build -V -f ${KFDEF_FILE} -d | oc create -n ${ctrlnamespace} -f -
+  kfctl build -V -f ${KFDEF_FILE} -d | oc create -n ${ctrlnamespace} -f -
 fi
 
 wait_for_pods_ready "-l control-plane=modelmesh-controller" "$ctrlnamespace"

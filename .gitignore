@@ -42,3 +42,4 @@ opendatahub/scripts/manifests/params.env
 opendatahub/scripts/manifests/fvt/
 opendatahub/scripts/manifests/runtimes/
 kfctl*
+bin

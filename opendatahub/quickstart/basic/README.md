@@ -51,7 +51,7 @@ spec:
 
 Deploy the sample model:
 ~~~
-./deploy.sh
+./opendatahub/quickstart/basic/deploy.sh
 ~~~
 
 ## Check the model deployment status
@@ -85,10 +85,19 @@ The following `curl` examples demonstrate how to perform inference requests.
 
 **Curl test without authentication enabled**
 ~~~
-export HOST_URL=$(oc get route example-onnx-mnist -ojsonpath='{.spec.host}' -n ${TEST_MM_NS})
-export HOST_PATH=$(oc get route example-onnx-mnist -ojsonpath='{.spec.path}' -n ${TEST_MM_NS})
+export HOST_URL=$(oc get route example-onnx-mnist -ojsonpath='{.spec.host}' -n modelmesh-serving)
 
-curl --silent --location --fail --show-error --insecure https://${HOST_URL}${HOST_PATH}/infer -d  @${COMMON_MANIFESTS_DIR}/input-onnx.json
+export HOST_PATH=$(oc get route example-onnx-mnist -ojsonpath='{.spec.path}' -n modelmesh-serving)
+
+##If you give commands echo $HOST_URL and echo $HOST_PATH you should get a similar output to the following:
+echo $HOST_URL
+example-onnx-mnist-modelmesh-serving.apps.user.dev.datahub.redhat.com
+echo $HOST_PATH
+/v2/models/example-onnx-mnist
+
+
+cd opendatahub/quickstart/common_manifests/
+curl -k --insecure https://${HOST_URL}${HOST_PATH}/infer -d  @input-onnx.json
 
 {"model_name":"example-onnx-mnist__isvc-b29c3d91f3","model_version":"1","outputs":[{"name":"Plus214_Output_0","datatype":"FP32","shape":[1,10],"data":[-8.233053,-7.7497034,-3.4236815,12.3630295,-12.079103,17.266596,-10.570976,0.7130762,3.321715,1.3621228]}]}
 ~~~

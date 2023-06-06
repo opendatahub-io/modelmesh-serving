@@ -90,6 +90,10 @@ spec:
             {{end}}
             - name: SHUTDOWN_TIMEOUT_MS
               value: "90000"
+            - name: MM_TLS_KEY_CERT_PATH
+              value: /etc/tls/private/tls.crt
+            - name: MM_TLS_PRIVATE_KEY_PATH
+              value: /etc/tls/private/tls.key
           readinessProbe:
             httpGet:
               path: /ready
@@ -105,6 +109,10 @@ spec:
             requests:
               cpu: "{{.ModelMeshRequestsCPU}}"
               memory: "{{.ModelMeshRequestsMemory}}"
+
+          volumeMounts:
+            - mountPath: /etc/tls/private
+              name: proxy-tls
 
           livenessProbe:
             httpGet:

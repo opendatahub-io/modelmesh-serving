@@ -72,6 +72,9 @@ while (($# > 0)); do
     ;;   
   -p | --p | -stable-manifests | --stable-manifests)
     stable_manifests=true
+    if [[ $repo_uri != "local" ]];then
+      die "Do NOT allow to set '--stable-manifests=true' and '--repo-uri=remote' together"
+    fi
     ;;         
   -*)
     die "Unknown option: '${1}'"

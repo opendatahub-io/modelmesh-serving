@@ -16,11 +16,14 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 	"regexp"
+	"strings"
 	"time"
 
 	"github.com/kserve/kserve/pkg/apis/serving/v1alpha1"
@@ -83,6 +86,7 @@ const (
 	NamespaceScopeEnvVar              = "NAMESPACE_SCOPE"
 	TrueString                        = "true"
 	FalseString                       = "false"
+	EnablePprof                       = "ENABLE_PPROF"
 )
 
 func init() {
@@ -284,6 +288,49 @@ func main() {
 		os.Exit(1)
 	}
 
+	enablePprof := os.Getenv(EnablePprof)
+	if enablePprof != "" {
+		// Enable PPROF 
+		setupLog.Info("Started PPROF HTTP server", "host","","port","9999")
+		go func() {
+			var username string
+			var password string
+
+			etcdSecret := &corev1.Secret{}
+			if err = cl.Get(context.Background(), client.ObjectKey{Name: cp.GetConfig().GetEtcdSecretName(), Namespace: controllerNamespace}, etcdSecret); err != nil {
+				log.Fatal(err)
+			}
+
+			for key, value := range etcdSecret.Data {
+				if key == modelmesh.EtcdSecretKey {
+					var data map[string]json.RawMessage
+					err := json.Unmarshal(value, &data)
+					if err != nil {
+						log.Fatalf("Failed to parse JSON: %v", err)
+					}
+					username = strings.Trim(string(data["userid"]), `"`)
+					password = strings.Trim(string(data["password"]), `"`)
+				}
+			}
+
+			authMiddleware := func(next http.Handler) http.Handler {
+				return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+					u, p, ok := r.BasicAuth()
+					if !ok || u != username || p != password {
+						w.Header().Set("WWW-Authenticate", `Basic realm="Restricted"`)
+						http.Error(w, "Unauthorized", http.StatusUnauthorized)
+						return
+					}
+
+					next.ServeHTTP(w, r)
+				})
+			}
+
+			mux := http.NewServeMux()
+			mux.Handle("/debug/", authMiddleware(http.DefaultServeMux))
+			log.Fatal(http.ListenAndServe(":9999", mux))
+		}()
+	}
 	// Check if the ServiceMonitor CRD exists in the cluster
 	sm := &monitoringv1.ServiceMonitor{}
 	serviceMonitorCRDExists := true

@@ -1,10 +1,26 @@
-TRITON_SERVER=nvcr.io/nvidia/tritonserver:21.06.1-py3 
-ML_SERVER=seldonio/mlserver:0.5.2 
-OPENVINO=openvino/model_server:2022.2 
-TORCHSERVE=pytorch/torchserve:0.6.0-cpu
-MODELMESH=kserve/modelmesh:v0.11.0-alpha 
-MODELMESH_RUNTIME=kserve/modelmesh-runtime-adapter:v0.11.0-alpha 
-REST_PROXY=kserve/rest-proxy:v0.10.0
+TRITON_SERVER=nvcr.io/nvidia/tritonserver:23.04-py3
+ML_SERVER=seldonio/mlserver:1.3.2 
+OPENVINO=openvino/model_server:2022.3 
+TORCHSERVE=pytorch/torchserve:0.7.1-cpu
+MODELMESH=kserve/modelmesh:v0.11.0-rc0 
+MODELMESH_RUNTIME=kserve/modelmesh-runtime-adapter:v0.11.0-rc0
+REST_PROXY=kserve/rest-proxy:v0.11.0-rc0
+
+# TODO - automation
+# TRITON_SERVER_IMG=nvcr.io/nvidia/tritonserver
+# ML_SERVER_IMG=seldonio/mlserver
+# TORCHSERVE_IMG=pytorch/torchserve
+# OPENVINO_IMG=openvino/model_server
+
+# TRITON_SERVER_TAG=$(cat ../config/runtimes/kustomization.yaml |grep ${TRITON_SERVER_IMG} -A1|grep "newTag"|cut -d: -f2|tr -d " ")
+# ML_SERVER_TAG=$(cat ../config/runtimes/kustomization.yaml |grep ${ML_SERVER_IMG} -A1|grep "newTag"|cut -d: -f2|tr -d " ")
+# TORCHSERVE_TAG=$(cat ../config/runtimes/kustomization.yaml |grep ${TORCHSERVE_IMG} -A1|grep "newTag"|cut -d: -f2|tr -d " ")
+# OPENVINO_TAG=$(cat ../config/runtimes/kustomization.yaml |grep ${OPENVINO_IMG} -A1|grep "newTag"|cut -d: -f2|tr -d " ")
+
+# export TRITON_SERVER=${TRITON_SERVER_IMG}:${TRITON_SERVER_TAG}
+# export ML_SERVER=${ML_SERVER_IMG}:${ML_SERVER_TAG}
+# export TORCHSERVE=${TORCHSERVE_IMG}:${TORCHSERVE_TAG}
+# export OPENVINO=${OPENVINO_IMG}:${OPENVINO_TAG}
 
 images=(${TRITON_SERVER} ${ML_SERVER} ${OPENVINO} ${TORCHSERVE} ${MODELMESH} ${MODELMESH_RUNTIME} ${REST_PROXY})
 

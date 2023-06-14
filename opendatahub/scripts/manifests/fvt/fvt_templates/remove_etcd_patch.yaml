@@ -1,0 +1,17 @@
+$patch: delete
+apiVersion: v1
+kind: Service
+metadata:
+  name: etcd
+---
+$patch: delete
+apiVersion: v1
+kind: Secret
+metadata:
+  name: model-serving-etcd
+---
+$patch: delete
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: etcd

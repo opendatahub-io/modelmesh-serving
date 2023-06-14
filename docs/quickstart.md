@@ -8,14 +8,12 @@ To quickly get started using ModelMesh Serving, here is a brief guide.
 - [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl) and [kustomize](https://kubectl.docs.kubernetes.io/installation/kustomize/) (v4.0.0+)
 - At least 4 vCPU and 8 GB memory. For more details, please see [here](install/README.md#deployed-components).
 
-_(Note)_ Regarding webhook certificates, there are 2 options: `cert-manager` and `self-signed-certificate`. Please refer to [install help](install/install-script.md#installation-1).
-
 ## 1. Install ModelMesh Serving
 
 ### Get the `v0.11.0-alpha` release
 
 ```shell
-RELEASE="release-0.11-alpha"
+RELEASE=release-0.11
 git clone -b $RELEASE --depth 1 --single-branch https://github.com/kserve/modelmesh-serving.git
 cd modelmesh-serving
 ```
@@ -24,7 +22,7 @@ cd modelmesh-serving
 
 ```shell
 kubectl create namespace modelmesh-serving
-./scripts/install.sh --namespace-scope-mode --namespace modelmesh-serving --quickstart --enable-self-signed-ca
+./scripts/install.sh --namespace-scope-mode --namespace modelmesh-serving --quickstart
 ```
 
 This will install ModelMesh Serving in the `modelmesh-serving` namespace, along with an etcd and MinIO instances.
@@ -53,7 +51,7 @@ Check that the `ServingRuntime`s are available:
 kubectl get servingruntimes
 
 NAME           DISABLED   MODELTYPE    CONTAINERS   AGE
-mlserver-0.x              sklearn      mlserver     5m
+mlserver-1.x              sklearn      mlserver     5m
 ovms-1.x                  openvino_ir  ovms         5m
 torchserve-0.x            pytorch-mar  torchserve   5m
 triton-2.x                tensorflow   triton       5m
@@ -65,7 +63,7 @@ are:
 
 | ServingRuntime | Supported Frameworks                |
 | -------------- | ----------------------------------- |
-| mlserver-0.x   | sklearn, xgboost, lightgbm          |
+| mlserver-1.x   | sklearn, xgboost, lightgbm          |
 | ovms-1.x       | openvino_ir, onnx                   |
 | torchserve-0.x | pytorch-mar                         |
 | triton-2.x     | tensorflow, pytorch, onnx, tensorrt |
@@ -136,8 +134,8 @@ Eventually, you should see the `ServingRuntime` pods that will hold the SKLearn 
 kubectl get pods
 
 ...
-modelmesh-serving-mlserver-0.x-7db675f677-twrwd   3/3     Running   0          2m
-modelmesh-serving-mlserver-0.x-7db675f677-xvd8q   3/3     Running   0          2m
+modelmesh-serving-mlserver-1.x-7db675f677-twrwd   3/3     Running   0          2m
+modelmesh-serving-mlserver-1.x-7db675f677-xvd8q   3/3     Running   0          2m
 ```
 
 Then, checking on the `InferenceService` again, you should see that the one we deployed is now ready with a provided URL:

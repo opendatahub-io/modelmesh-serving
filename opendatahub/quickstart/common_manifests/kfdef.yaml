@@ -19,4 +19,4 @@ spec:
       name: model-mesh
   repos:
     - name: manifests
-      uri: 'https://github.com/opendatahub-io/odh-manifests/tarball/main'
+      uri: "https://github.com/opendatahub-io/odh-manifests/tarball/main"

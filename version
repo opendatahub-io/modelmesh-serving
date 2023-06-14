@@ -1,4 +1,4 @@
 # Version information
-opendatahub version: latest (branch: main)
-upstream kserve modelmesh version: v0.11.0-alpha
-modelmesh serving version: latest (branch: main)
+upstream kserve/modelmesh-serving version: v0.11.0-rc0
+opendatahub version: latest
+opendatahub modelmesh-serving branch: main

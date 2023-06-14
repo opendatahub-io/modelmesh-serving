@@ -4,7 +4,7 @@ ModelMesh Serving is the Controller for managing ModelMesh, a general-purpose mo
 
 ## Getting Started
 
-To quickly get started with ModelMesh Serving, check out the [Quick Start Guide](./opendatahub/quickstart/basic).
+To quickly get started with ModelMesh Serving, check out the [Quick Start Guide](./opendatahub/quickstart).
 
 For help, please open an issue in this repository.
 

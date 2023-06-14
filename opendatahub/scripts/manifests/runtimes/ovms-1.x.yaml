@@ -34,7 +34,7 @@ spec:
 
   containers:
     - name: ovms
-      image: quay.io/opendatahub/openvino_model_server:2022.3-gpu
+      image: quay.io/opendatahub/openvino_model_server:2022.3-release
       args:
         - --port=8001
         - --rest_port=8888

@@ -117,6 +117,8 @@ wait_downloading_images(){
   nodeCount=$(oc get node|grep worker|grep -v infra|wc -l)
   expectedTotalCount=$((${#images[@]}*${nodeCount}))
   totalCount=0
+  retries=0
+  max_retries=20
   echo "Node: ${nodeCount}, Required Images: ${#images[@]}, Expected Downloading Count: ${expectedTotalCount}"
 
   sleep 10s
@@ -126,6 +128,7 @@ wait_downloading_images(){
     echo "Downloading required images.. please wait!"    
     for element in "${images[@]}"
     do
+     retries=$((retries + 1 ))
       case "$element" in
         *triton*)
             isDownloaded=$(oc describe pod -n $namespace -l app=image-downloader|grep "Successfully pulled image \"${TRITON_SERVER}\""|wc -l)
@@ -210,11 +213,15 @@ wait_downloading_images(){
           ;;
       esac
     done
-    if [[ $totalCount -lt $expectedTotalCount ]]; then
+    if [[ $totalCount -lt $expectedTotalCount ]] && [[ ${retries} -lt ${max_retries} ]]; then
       echo 
       echo "Reset totalCount = 0 and checking it again after 60s"
       sleep 60s
     fi
   done
-  echo "All images are downloaded"
+  if [[ ${retries} -lt ${max_retries} ]]; then
+    echo "All images are downloaded"
+  else 
+    echo "Exceed max retries(${max_retries})"
+  fi
 }

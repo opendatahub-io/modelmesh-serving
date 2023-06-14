@@ -115,6 +115,7 @@ fi
 # The upstream use ClusterServingRuntime so this replace ClusterServingRuntime to ServingRuntime.
 if [[ ! -d $MANIFESTS_DIR/runtimes ]] || [[ ${force} == "true" ]];then
   info ".. The upstream use ClusterServingRuntime so this replace ClusterServingRuntime to ServingRuntime."
+  rm -rf $MANIFESTS_DIR/runtimes/*-*.yaml
   cp -R $ODH_MANIFESTS_DIR/${target_modelmesh_dir}/odh-modelmesh-controller/runtimes $MANIFESTS_DIR/.
   # Remove not supported runtimes
   pushd $MANIFESTS_DIR/runtimes

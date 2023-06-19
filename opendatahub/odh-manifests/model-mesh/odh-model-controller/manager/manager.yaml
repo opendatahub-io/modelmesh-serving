@@ -18,6 +18,18 @@ spec:
         control-plane: odh-model-controller
         app: odh-model-controller
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: control-plane
+                      operator: In
+                      values:
+                        - odh-model-controller
+                topologyKey: kubernetes.io/hostname
       securityContext:
         runAsNonRoot: true
       containers:

@@ -17,9 +17,9 @@ cd modelmesh-serving
 2. Run the install script:
 
 ```
-source ../env.sh
-
 cd opendatahub/quickstart/$QUICK_START_FOLDER # (for example, cd opendatahub/quickstart/basic)
+
+source ../env.sh
 
 ./deploy.sh
 ```

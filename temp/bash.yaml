@@ -1,0 +1,11 @@
+---
+apiVersion: v1
+id: openshift-bash-test
+kind: Pod
+metadata:
+  name: openshift-bash-test
+spec:
+  containers:
+    - image: registry.access.redhat.com/ubi8/ubi:8.7
+      name: bash-test
+      command: ['/sbin/init']

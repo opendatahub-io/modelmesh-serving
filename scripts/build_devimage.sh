@@ -37,7 +37,12 @@ else
   mkdir -p $CONTEXT_DIR
   cp ${DEV_DEPS} ${CONTEXT_DIR}
   echo "Building dev image ${FULL_IMAGE_NAME}"
+  +if [ $(uname -m) == ppc64le ];then
++  echo "inside if"
++  $ENGINE build -f ${CONTEXT_DIR}/Dockerfile.develop -t ${FULL_IMAGE_NAME} --build-arg KUSTOMIZE_VERSION=5.1.0 ${CONTEXT_DIR}
++else
   $ENGINE build -f ${CONTEXT_DIR}/Dockerfile.develop -t ${FULL_IMAGE_NAME} ${CONTEXT_DIR}
+  fi
 fi
 echo -n "${FULL_IMAGE_NAME}" > .develop_image_name
 

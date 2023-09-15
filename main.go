@@ -290,8 +290,8 @@ func main() {
 
 	enablePprof := os.Getenv(EnablePprof)
 	if enablePprof != "" {
-		// Enable PPROF 
-		setupLog.Info("Started PPROF HTTP server", "host","","port","9999")
+		// Enable PPROF
+		setupLog.Info("Started PPROF HTTP server", "host", "", "port", "9999")
 		go func() {
 			var username string
 			var password string

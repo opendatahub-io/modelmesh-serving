@@ -67,7 +67,7 @@ fvt:
 	ginkgo -v -procs=2 --fail-fast fvt/predictor fvt/scaleToZero fvt/storage fvt/hpa --timeout=50m
 
 fvt-stable:
-	ginkgo -v -procs=2 --progress --fail-fast fvt/predictor fvt/scaleToZero fvt/storage --timeout=50m
+	ginkgo -v -procs=2 --fail-fast fvt/predictor fvt/scaleToZero fvt/storage fvt/hpa --timeout=50m
 
 .PHONY: codegen-fvt
 ## Regenerate grpc code stubs for FVT

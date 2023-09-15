@@ -11,11 +11,6 @@ spec:
             - --leader-elect
             - "--monitoring-namespace"
             - "$(MONITORING_NS)"
-#This is hardcoded to be false in the overlay to model-mesh. 
-# Once Kserve and Modelmesh CRD conflict is resolved and both components can be installed together, 
-# ODH Model Controller will not be deployed as a overlay anymore and will be deployed only as an independent component. 
-# When that happens, the "kserve-enabled" flag needs to be removed
-            - --kserve-enabled=false            
           image: $(odh-model-controller)
           env:
             - name: MONITORING_NS

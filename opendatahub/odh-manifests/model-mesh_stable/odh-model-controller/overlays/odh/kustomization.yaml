@@ -5,6 +5,8 @@ resources:
 
 patchesStrategicMerge:
   - odh_model_controller_manager_patch.yaml
+commonLabels:
+  app.kubernetes.io/managed-by: odh-model-controller
 
 configurations:
   - params.yaml

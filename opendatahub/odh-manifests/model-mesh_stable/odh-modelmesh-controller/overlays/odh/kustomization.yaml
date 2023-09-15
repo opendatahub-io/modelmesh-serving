@@ -9,8 +9,7 @@ resources:
   - ./manager
 
 commonLabels:
-  app: model-mesh
-  app.kubernetes.io/part-of: model-mesh
+  app.kubernetes.io/managed-by: modelmesh-controller
 
 configurations:
   - params.yaml

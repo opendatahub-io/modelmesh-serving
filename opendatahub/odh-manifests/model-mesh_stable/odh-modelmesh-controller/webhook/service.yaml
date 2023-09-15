@@ -11,28 +11,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-resources:
-  - triton-2.x.yaml
-  - mlserver-1.x.yaml
-  - ovms-1.x.yaml
-  - torchserve-0.x.yaml
-
-images:
-  - name: tritonserver-2
-    newName: nvcr.io/nvidia/tritonserver
-    newTag: "23.04-py3"
-
-  - name: mlserver-1
-    newName: seldonio/mlserver
-    newTag: "1.3.2"
-
-  - name: ovms-1
-    newName: openvino/model_server
-    newTag: "2022.3"
-
-  - name: torchserve-0
-    newName: pytorch/torchserve
-    newTag: 0.7.1-cpu
-
-transformers:
-  - ../default/metadataLabelTransformer.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: modelmesh-webhook-server-service
+  annotations:
+    service.beta.openshift.io/serving-cert-secret-name: modelmesh-webhook-server-cert
+spec:
+  ports:
+    - port: 9443
+      protocol: TCP
+      targetPort: webhook
+  selector:
+    control-plane: modelmesh-controller

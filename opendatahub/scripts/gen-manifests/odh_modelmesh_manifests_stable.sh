@@ -37,3 +37,25 @@ echo -n ".. Add trustAI option into config-defaults.yaml"
 yq eval '."payloadProcessors" = ""'  -i ${MODELMESH_CONTROLLER_DIR}/default/config-defaults.yaml
 echo -e "\r ✓"
 
+echo -n ".. Remove CertManager related from default/kustomization.yaml"
+sed '/certmanager/d' -i ${MODELMESH_CONTROLLER_DIR}/default/kustomization.yaml
+
+licenseNum=$(grep -n vars ${MODELMESH_CONTROLLER_DIR}/default/kustomization.yaml |cut -d':' -f1)
+configMapGeneratorStartLine=$(grep -n configMapGenerator  ${MODELMESH_CONTROLLER_DIR}/default/kustomization.yaml |cut -d':' -f1)
+configMapGeneratorBeforeLine=$((configMapGeneratorStartLine-1))
+sed -i "${licenseNum},${configMapGeneratorBeforeLine}d"  ${MODELMESH_CONTROLLER_DIR}/default/kustomization.yaml
+
+# remove webhookcainjection_patch.yaml
+sed -i '/webhookcainjection_patch.yaml/d'  ${MODELMESH_CONTROLLER_DIR}/default/kustomization.yaml
+echo -e "\r ✓"
+
+echo -n ".. Add serving-cert-secret-name to webhook/service.yaml"
+yq eval '.metadata.annotations."service.beta.openshift.io/serving-cert-secret-name"="modelmesh-webhook-server-cert"' -i  ${MODELMESH_CONTROLLER_DIR}/webhook/service.yaml
+echo -e "\r ✓"
+
+echo -n ".. Add inject-cabundle into webhook/kustomization.yaml"
+yq eval '.commonAnnotations += {"service.beta.openshift.io/inject-cabundle": "true"}' -i ${MODELMESH_CONTROLLER_DIR}/webhook/kustomization.yaml
+
+echo -n ".. Remove namespace "
+sed '/namespace/d' -i  ${MODELMESH_CONTROLLER_DIR}/webhook/service.yaml
+echo -e "\r ✓"

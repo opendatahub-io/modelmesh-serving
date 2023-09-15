@@ -2,9 +2,9 @@ TRITON_SERVER=nvcr.io/nvidia/tritonserver:23.04-py3
 ML_SERVER=seldonio/mlserver:1.3.2 
 OPENVINO=openvino/model_server:2022.3 
 TORCHSERVE=pytorch/torchserve:0.7.1-cpu
-MODELMESH=kserve/modelmesh:v0.11.0-rc0 
-MODELMESH_RUNTIME=kserve/modelmesh-runtime-adapter:v0.11.0-rc0
-REST_PROXY=kserve/rest-proxy:v0.11.0-rc0
+MODELMESH=kserve/modelmesh:v0.11.0 
+MODELMESH_RUNTIME=kserve/modelmesh-runtime-adapter:v0.11.0
+REST_PROXY=kserve/rest-proxy:v0.11.0
 
 # TODO - automation
 # TRITON_SERVER_IMG=nvcr.io/nvidia/tritonserver

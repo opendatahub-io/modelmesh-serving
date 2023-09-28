@@ -6,8 +6,6 @@ resources:
   - ../prometheus
   - ../overlays/odh
 
-commonLabels:
-  app.kubernetes.io/part-of: model-mesh
 namespace: opendatahub
 configMapGenerator:
   - envs:

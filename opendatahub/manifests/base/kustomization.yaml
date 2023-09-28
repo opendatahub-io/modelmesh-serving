@@ -53,6 +53,13 @@ vars:
       kind: ConfigMap
       name: mesh-parameters
   - fieldref:
+      fieldPath: data.odh-modelmesh-controller
+    name: odh-modelmesh-controller
+    objref:
+      apiVersion: v1
+      kind: ConfigMap
+      name: mesh-parameters
+  - fieldref:
       fieldPath: data.odh-openvino
     name: odh-openvino
     objref:

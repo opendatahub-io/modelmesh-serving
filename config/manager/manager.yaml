@@ -23,21 +23,13 @@ spec:
   selector:
     matchLabels:
       control-plane: modelmesh-controller
-  replicas: 3 # This can be increased safely to enable HA. A good value to set is 3.
+  replicas: 1 # This can be increased safely to enable HA. A good value to set is 3.
   template:
     metadata:
       labels:
         control-plane: modelmesh-controller
     spec:
       affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-              - matchExpressions:
-                  - key: kubernetes.io/arch
-                    operator: In
-                    values:
-                      - amd64
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
             - weight: 100
@@ -54,7 +46,7 @@ spec:
             - /manager
           args:
             - --enable-leader-election
-          image: $(odh-modelmesh-controller)
+          image: modelmesh-controller:replace
           name: manager
           env:
             - name: POD_NAME
@@ -81,7 +73,7 @@ spec:
               memory: 96Mi
             limits:
               cpu: "1"
-              memory: 2Gi
+              memory: 512Mi
           volumeMounts:
             - mountPath: /etc/model-serving/config/default
               name: config-defaults

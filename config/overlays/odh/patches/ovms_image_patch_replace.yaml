@@ -1,0 +1,8 @@
+$patch: replace
+apiVersion: serving.kserve.io/v1alpha1
+kind: ClusterServingRuntime
+metadata:
+  name: ovms-1.x
+spec:
+  containers:
+    - image: $(odh-openvino)

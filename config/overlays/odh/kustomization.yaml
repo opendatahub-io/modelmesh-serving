@@ -2,14 +2,69 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - ./scripts/
-  - ./quickstart.yaml
-  - ./rbac/
-  - ./manager
+  - ../../default
+  - ../../prometheus
+  - ./default/
 
-commonLabels:
-  app: model-mesh
-  app.kubernetes.io/part-of: model-mesh
+namespace: opendatahub
+configMapGenerator:
+  - envs:
+      - params.env
+    name: mesh-parameters
+generatorOptions:
+  disableNameSuffixHash: true
 
-configurations:
-  - params.yaml
+vars:
+  - fieldref:
+      fieldPath: metadata.namespace
+    name: mesh-namespace
+    objref:
+      apiVersion: v1
+      kind: ConfigMap
+      name: mesh-parameters
+  - fieldref:
+      fieldPath: data.odh-modelmesh
+    name: odh-modelmesh
+    objref:
+      apiVersion: v1
+      kind: ConfigMap
+      name: mesh-parameters
+  - fieldref:
+      fieldPath: data.odh-mm-rest-proxy
+    name: odh-mm-rest-proxy
+    objref:
+      apiVersion: v1
+      kind: ConfigMap
+      name: mesh-parameters
+  - fieldref:
+      fieldPath: data.odh-modelmesh-runtime-adapter
+    name: odh-modelmesh-runtime-adapter
+    objref:
+      apiVersion: v1
+      kind: ConfigMap
+      name: mesh-parameters
+  - fieldref:
+      fieldPath: data.odh-modelmesh-controller
+    name: odh-modelmesh-controller
+    objref:
+      apiVersion: v1
+      kind: ConfigMap
+      name: mesh-parameters
+  - fieldref:
+      fieldPath: data.odh-openvino
+    name: odh-openvino
+    objref:
+      apiVersion: v1
+      kind: ConfigMap
+      name: mesh-parameters
+
+
+patchesStrategicMerge:
+  - ./patches/clusterservingruntime_patch_delete.yaml
+  - ./patches/config_defaults_upstream_patch_delete.yaml 
+  - ./patches/certmanager_issuer_patch_delete.yaml
+  - ./patches/certmanager_certificate_patch_delete.yaml
+  - ./patches/controller_manager_patch_replace.yaml
+  - ./patches/ovms_image_patch_replace.yaml
+  - ./patches/webhook_manifests_patch_replace.yaml
+  - ./patches/webhook_service_patch_replace.yaml

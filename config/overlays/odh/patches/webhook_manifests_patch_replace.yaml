@@ -1,0 +1,7 @@
+$patch: replace
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: modelmesh-servingruntime.serving.kserve.io
+  annotations:
+    service.beta.openshift.io/inject-cabundle: "true"

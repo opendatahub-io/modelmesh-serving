@@ -2,9 +2,9 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - ../../default
+  - ../../crd
   - ../../prometheus
-  - ./default/
+  - ./default
 
 namespace: opendatahub
 configMapGenerator:
@@ -61,10 +61,3 @@ vars:
 
 patchesStrategicMerge:
   - ./patches/clusterservingruntime_patch_delete.yaml
-  - ./patches/config_defaults_upstream_patch_delete.yaml 
-  - ./patches/certmanager_issuer_patch_delete.yaml
-  - ./patches/certmanager_certificate_patch_delete.yaml
-  - ./patches/controller_manager_patch_replace.yaml
-  - ./patches/ovms_image_patch_replace.yaml
-  - ./patches/webhook_manifests_patch_replace.yaml
-  - ./patches/webhook_service_patch_replace.yaml

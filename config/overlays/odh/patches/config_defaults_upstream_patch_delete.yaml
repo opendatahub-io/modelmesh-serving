@@ -1,5 +1,0 @@
-$patch: delete
-kind: ConfigMap
-apiVersion: v1
-metadata:
-  name: model-serving-config-defaults

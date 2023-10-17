@@ -4,7 +4,7 @@ kind: Kustomization
 resources:
   - ../../crd
   - ../../prometheus
-  - ./manager
+  - ./default
   - ./webhook
   - ./scripts
   - ./quickstart.yaml

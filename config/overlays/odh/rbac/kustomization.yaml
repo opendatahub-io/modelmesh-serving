@@ -7,5 +7,8 @@ resources:
   - ./role_apps_metrics_access.yaml
   - ./user_cluster_roles.yaml
 
+transformers:
+  - rbacMetadataLabelTransformer.yaml
+
 patchesStrategicMerge:
   - remove_networkpolicy_rumtime_patch.yaml

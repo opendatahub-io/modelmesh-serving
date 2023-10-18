@@ -2,7 +2,9 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
+  - ../crd/
   - ../manager/
+  - ../webhook
 
 configMapGenerator:
   - files:
@@ -11,6 +13,9 @@ configMapGenerator:
 
 generatorOptions:
   disableNameSuffixHash: true
+
+transformers:
+  - metadataLabelTransformer.yaml
 
 configurations:
   - params.yaml

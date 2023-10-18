@@ -18,6 +18,7 @@ metadata:
 spec:
   podSelector:
     matchLabels:
+      app.kubernetes.io/managed-by: modelmesh-controller
       component: model-mesh-etcd
       app.kubernetes.io/part-of: model-mesh
   ingress:

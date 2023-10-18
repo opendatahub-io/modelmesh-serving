@@ -7,3 +7,17 @@ resources:
 
 patches:
   - path: ./controller_manager_patch_replace.yaml
+  - target:
+      kind: Deployment
+      name: modelmesh-controller
+    patch: |
+      - op: add
+        path: /spec/template/spec/affinity/nodeAffinity
+        value:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                - key: kubernetes.io/arch
+                  operator: In
+                  values:
+                    - amd64

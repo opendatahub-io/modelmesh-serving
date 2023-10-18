@@ -4,10 +4,6 @@ metadata:
   name: modelmesh-controller
 spec:
   replicas: 3
-  selector:
-    matchLabels:
-      app.kubernetes.io/managed-by: modelmesh-controller
-      control-plane: modelmesh-controller
   template:
     spec:
       containers:

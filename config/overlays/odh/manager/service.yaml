@@ -12,5 +12,4 @@ spec:
       targetPort: 8080
   type: ClusterIP
   selector:
-    app.kubernetes.io/managed-by: modelmesh-controller
     control-plane: modelmesh-controller

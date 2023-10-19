@@ -1,8 +1,12 @@
+---
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - ../odh-modelmesh-controller/overlays/odh
-    #  - ../odh-model-controller/overlays/odh
+  - ../../prometheus
+  - ./default
+  - ./scripts
+  - ./quickstart.yaml
+  - ./rbac
 
 namespace: opendatahub
 configMapGenerator:
@@ -12,17 +16,11 @@ configMapGenerator:
 generatorOptions:
   disableNameSuffixHash: true
 
+
 vars:
   - fieldref:
       fieldPath: metadata.namespace
     name: mesh-namespace
-    objref:
-      apiVersion: v1
-      kind: ConfigMap
-      name: mesh-parameters
-  - fieldref:
-      fieldPath: data.monitoring-namespace
-    name: monitoring-namespace
     objref:
       apiVersion: v1
       kind: ConfigMap
@@ -55,17 +53,13 @@ vars:
       apiVersion: v1
       kind: ConfigMap
       name: mesh-parameters
-  - fieldref:
-      fieldPath: data.odh-model-controller
-    name: odh-model-controller
-    objref:
-      apiVersion: v1
-      kind: ConfigMap
-      name: mesh-parameters
-  - fieldref:
-      fieldPath: data.odh-openvino
-    name: odh-openvino
-    objref:
-      apiVersion: v1
-      kind: ConfigMap
-      name: mesh-parameters
+
+commonLabels:
+  app: model-mesh
+  app.kubernetes.io/part-of: model-mesh
+
+patchesStrategicMerge:
+  - ./crd/clusterservingruntime_patch_delete.yaml
+
+configurations:
+  - params.yaml

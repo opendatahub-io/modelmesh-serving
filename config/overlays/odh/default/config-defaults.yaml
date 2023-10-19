@@ -12,11 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # These are the system defaults which users can override with a user config
+
+# OpenDataHub override : ODH config-defaults is different from upstream
 podsPerRuntime: 2
 headlessService: true
 modelMeshImage:
-  name: kserve/modelmesh
-  tag: v0.11.1
+  name: $(odh-modelmesh)
 modelMeshResources:
   requests:
     cpu: "300m"
@@ -28,8 +29,7 @@ restProxy:
   enabled: true
   port: 8008
   image:
-    name: kserve/rest-proxy
-    tag: v0.11.1
+    name: $(odh-mm-rest-proxy)
   resources:
     requests:
       cpu: "50m"
@@ -38,8 +38,7 @@ restProxy:
       cpu: "1"
       memory: "512Mi"
 storageHelperImage:
-  name: kserve/modelmesh-runtime-adapter
-  tag: v0.11.1
+  name: $(odh-modelmesh-runtime-adapter)
   command: ["/opt/app/puller"]
 storageHelperResources:
   requests:
@@ -51,8 +50,4 @@ storageHelperResources:
 serviceAccountName: "modelmesh-serving-sa"
 metrics:
   enabled: true
-builtInServerTypes:
-  - triton
-  - mlserver
-  - ovms
-  - torchserve
+payloadProcessors: ""

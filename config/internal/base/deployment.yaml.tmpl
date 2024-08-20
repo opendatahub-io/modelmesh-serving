@@ -133,8 +133,8 @@ spec:
             - --tls-cert=/etc/tls/private/tls.crt
             - --tls-key=/etc/tls/private/tls.key
             - --cookie-secret=SECRET
-            - '--openshift-delegate-urls={"/": {"namespace": "{{.AuthNamespace}}", "resource": "services", "verb": "get"}}'
-            - '--openshift-sar={"namespace": "{{.AuthNamespace}}", "resource": "services", "verb": "get"}'
+            - '--openshift-delegate-urls={"/": {"namespace": "{{.AuthNamespace}}", "group": "serving.kserve.io", "resource": "servingruntimes", "verb": "get", "name": "{{.Name}}"}}'
+            - '--openshift-sar={"namespace": "{{.AuthNamespace}}", "group": "serving.kserve.io", "resource": "servingruntimes", "verb": "get", "name": "{{.Name}}"}'
             - --skip-auth-regex='(^/metrics|^/apis/v1beta1/healthz)'
           image: registry.redhat.io/openshift4/ose-oauth-proxy@sha256:4bef31eb993feb6f1096b51b4876c65a6fb1f4401fee97fa4f4542b6b7c9bc46
           ports:

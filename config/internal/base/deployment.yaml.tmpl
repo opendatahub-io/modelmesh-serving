@@ -136,7 +136,7 @@ spec:
             - '--openshift-delegate-urls={"/": {"namespace": "{{.AuthNamespace}}", "resource": "services", "verb": "get"}}'
             - '--openshift-sar={"namespace": "{{.AuthNamespace}}", "resource": "services", "verb": "get"}'
             - --skip-auth-regex='(^/metrics|^/apis/v1beta1/healthz)'
-          image: registry.redhat.io/openshift4/ose-oauth-proxy@sha256:4bef31eb993feb6f1096b51b4876c65a6fb1f4401fee97fa4f4542b6b7c9bc46
+          image: registry.redhat.io/openshift4/ose-oauth-proxy@sha256:8507daed246d4d367704f7d7193233724acf1072572e1226ca063c066b858ecf
           ports:
             - containerPort: 8443
               name: https

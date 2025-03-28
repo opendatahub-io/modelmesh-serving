@@ -35,7 +35,7 @@ CONTROLLER_GEN_VERSION ?= "v0.11.4"
 # https://github.com/kubernetes-sigs/controller-runtime/tree/main/tools/setup-envtest
 # install with `go install sigs.k8s.io/controller-runtime/tools/setup-envtest@latest`
 # find available versions by running `setup-envtest list`
-KUBERNETES_VERSION ?= 1.23
+KUBERNETES_VERSION ?= 1.26
 
 CRD_OPTIONS ?= "crd:maxDescLen=0"
 
@@ -178,7 +178,7 @@ develop: build.develop
 
 .PHONY: run
 ## Run make target inside developer container (e.g. `make run fmt`)
-run: build.develop
+run:
 	./scripts/develop.sh make $(RUN_ARGS)
 
 .PHONY: push

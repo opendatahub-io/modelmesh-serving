@@ -170,4 +170,21 @@ oc get clusterrolebinding "${namespace}"-modelmesh-serving-sa-auth-delegator || 
 # Create a SA "prometheus-ns-access" becuase odh-model-controller create rolebinding "prometheus-ns-access" with the SA where namespaces have modelmesh-enabled=true label
 oc get sa prometheus-ns-access -n "${namespace}" || oc create sa prometheus-ns-access -n "${namespace}"
 
+cat <<EOF | oc apply -f -
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-all
+  namespace: modelmesh-serving
+spec:
+  podSelector: {} 
+  ingress:
+  - {}  
+  egress:
+  - {}  
+  policyTypes:
+  - Ingress
+  - Egress
+EOF
+
 success "[SUCCESS] Ready to do fvt test"

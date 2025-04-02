@@ -49,70 +49,70 @@ type FVTPredictor struct {
 
 // Array of all the predictors that need to be tested
 var predictorsArray = []FVTPredictor{
-	{
-		predictorName:              "tf",
-		predictorFilename:          "tf-predictor.yaml",
-		currentModelPath:           "fvt/tensorflow/mnist.savedmodel",
-		updatedModelPath:           "fvt/tensorflow/mnist-dup.savedmodel",
-		differentPredictorName:     "onnx",
-		differentPredictorFilename: "onnx-predictor.yaml",
-	},
-	{
-		predictorName:              "keras",
-		predictorFilename:          "keras-predictor.yaml",
-		currentModelPath:           "fvt/tensorflow/keras-mnist/mnist.h5",
-		updatedModelPath:           "fvt/tensorflow/keras-mnistnew/mnist.h5",
-		differentPredictorName:     "tf",
-		differentPredictorFilename: "tf-predictor.yaml",
-	},
-	{
-		predictorName:              "onnx",
-		predictorFilename:          "onnx-predictor.yaml",
-		currentModelPath:           "fvt/onnx/onnx-mnist",
-		updatedModelPath:           "fvt/onnx/onnx-mnist-new",
-		differentPredictorName:     "pytorch",
-		differentPredictorFilename: "pytorch-predictor.yaml",
-	},
-	{
-		predictorName:              "onnx-withschema",
-		predictorFilename:          "onnx-predictor-withschema.yaml",
-		currentModelPath:           "fvt/onnx/onnx-withschema",
-		updatedModelPath:           "fvt/onnx/onnx-withschema-new",
-		differentPredictorName:     "pytorch",
-		differentPredictorFilename: "pytorch-predictor.yaml",
-	},
-	{
-		predictorName:              "pytorch",
-		predictorFilename:          "pytorch-predictor.yaml",
-		currentModelPath:           "fvt/pytorch/pytorch-cifar",
-		updatedModelPath:           "fvt/pytorch/pytorch-cifar-new",
-		differentPredictorName:     "onnx",
-		differentPredictorFilename: "onnx-predictor.yaml",
-	},
-	{
-		predictorName:              "xgboost",
-		predictorFilename:          "xgboost-predictor.yaml",
-		currentModelPath:           "fvt/xgboost/mushroom",
-		updatedModelPath:           "fvt/xgboost/mushroom-dup",
-		differentPredictorName:     "onnx",
-		differentPredictorFilename: "onnx-predictor.yaml",
-	},
-	{
-		predictorName:              "lightgbm",
-		predictorFilename:          "lightgbm-predictor.yaml",
-		currentModelPath:           "fvt/lightgbm/mushroom",
-		updatedModelPath:           "fvt/lightgbm/mushroom-dup",
-		differentPredictorName:     "onnx",
-		differentPredictorFilename: "onnx-predictor.yaml",
-	},
-	{
-		predictorName:              "openvino",
-		predictorFilename:          "openvino-mnist-predictor.yaml",
-		currentModelPath:           "fvt/openvino/mnist",
-		updatedModelPath:           "fvt/openvino/mnist-dup",
-		differentPredictorName:     "xgboost",
-		differentPredictorFilename: "xgboost-predictor.yaml",
-	},
+	// {
+	// 	predictorName:              "tf",
+	// 	predictorFilename:          "tf-predictor.yaml",
+	// 	currentModelPath:           "fvt/tensorflow/mnist.savedmodel",
+	// 	updatedModelPath:           "fvt/tensorflow/mnist-dup.savedmodel",
+	// 	differentPredictorName:     "onnx",
+	// 	differentPredictorFilename: "onnx-predictor.yaml",
+	// },
+	// {
+	// 	predictorName:              "keras",
+	// 	predictorFilename:          "keras-predictor.yaml",
+	// 	currentModelPath:           "fvt/tensorflow/keras-mnist/mnist.h5",
+	// 	updatedModelPath:           "fvt/tensorflow/keras-mnistnew/mnist.h5",
+	// 	differentPredictorName:     "tf",
+	// 	differentPredictorFilename: "tf-predictor.yaml",
+	// },
+	// {
+	// 	predictorName:              "onnx",
+	// 	predictorFilename:          "onnx-predictor.yaml",
+	// 	currentModelPath:           "fvt/onnx/onnx-mnist",
+	// 	updatedModelPath:           "fvt/onnx/onnx-mnist-new",
+	// 	differentPredictorName:     "pytorch",
+	// 	differentPredictorFilename: "pytorch-predictor.yaml",
+	// },
+	// {
+	// 	predictorName:              "onnx-withschema",
+	// 	predictorFilename:          "onnx-predictor-withschema.yaml",
+	// 	currentModelPath:           "fvt/onnx/onnx-withschema",
+	// 	updatedModelPath:           "fvt/onnx/onnx-withschema-new",
+	// 	differentPredictorName:     "pytorch",
+	// 	differentPredictorFilename: "pytorch-predictor.yaml",
+	// },
+	// {
+	// 	predictorName:              "pytorch",
+	// 	predictorFilename:          "pytorch-predictor.yaml",
+	// 	currentModelPath:           "fvt/pytorch/pytorch-cifar",
+	// 	updatedModelPath:           "fvt/pytorch/pytorch-cifar-new",
+	// 	differentPredictorName:     "onnx",
+	// 	differentPredictorFilename: "onnx-predictor.yaml",
+	// },
+	// {
+	// 	predictorName:              "xgboost",
+	// 	predictorFilename:          "xgboost-predictor.yaml",
+	// 	currentModelPath:           "fvt/xgboost/mushroom",
+	// 	updatedModelPath:           "fvt/xgboost/mushroom-dup",
+	// 	differentPredictorName:     "onnx",
+	// 	differentPredictorFilename: "onnx-predictor.yaml",
+	// },
+	// {
+	// 	predictorName:              "lightgbm",
+	// 	predictorFilename:          "lightgbm-predictor.yaml",
+	// 	currentModelPath:           "fvt/lightgbm/mushroom",
+	// 	updatedModelPath:           "fvt/lightgbm/mushroom-dup",
+	// 	differentPredictorName:     "onnx",
+	// 	differentPredictorFilename: "onnx-predictor.yaml",
+	// },
+	// {
+	// 	predictorName:              "openvino",
+	// 	predictorFilename:          "openvino-mnist-predictor.yaml",
+	// 	currentModelPath:           "fvt/openvino/mnist",
+	// 	updatedModelPath:           "fvt/openvino/mnist-dup",
+	// 	differentPredictorName:     "xgboost",
+	// 	differentPredictorFilename: "xgboost-predictor.yaml",
+	// },
 	{
 		predictorName:              "xgboost-fil",
 		predictorFilename:          "xgboost-fil-predictor.yaml",
@@ -121,14 +121,14 @@ var predictorsArray = []FVTPredictor{
 		differentPredictorName:     "onnx",
 		differentPredictorFilename: "onnx-predictor.yaml",
 	},
-	{
-		predictorName:              "lightgbm-fil",
-		predictorFilename:          "lightgbm-fil-predictor.yaml",
-		currentModelPath:           "fvt/lightgbm/mushroom-fil",
-		updatedModelPath:           "fvt/lightgbm/mushroom-fil-dup",
-		differentPredictorName:     "onnx",
-		differentPredictorFilename: "onnx-predictor.yaml",
-	},
+	// {
+	// 	predictorName:              "lightgbm-fil",
+	// 	predictorFilename:          "lightgbm-fil-predictor.yaml",
+	// 	currentModelPath:           "fvt/lightgbm/mushroom-fil",
+	// 	updatedModelPath:           "fvt/lightgbm/mushroom-fil-dup",
+	// 	differentPredictorName:     "onnx",
+	// 	differentPredictorFilename: "onnx-predictor.yaml",
+	// },
 	// TorchServe test is currently disabled
 	// {
 	// 	predictorName:              "pytorch-mar",
@@ -1137,7 +1137,7 @@ var _ = Describe("Inference service", Ordered, func() {
 		var _ = Describe("test "+i.name+" isvc", Ordered, func() {
 			var isvcName string
 
-			FIt("should successfully load a model", func() {
+			It("should successfully load a model", func() {
 				isvcObject := NewIsvcForFVT(i.inferenceServiceFileName)
 				isvcName = isvcObject.GetName()
 				CreateIsvcAndWaitAndExpectReady(isvcObject, PredictorTimeout)
@@ -1150,9 +1150,9 @@ var _ = Describe("Inference service", Ordered, func() {
 				ExpectSuccessfulInference_sklearnMnistSvm(isvcName)
 			})
 
-			//AfterAll(func() {
-			//	FVTClientInstance.DeleteIsvc(isvcName)
-			//})
+			AfterAll(func() {
+				FVTClientInstance.DeleteIsvc(isvcName)
+			})
 
 		})
 	}

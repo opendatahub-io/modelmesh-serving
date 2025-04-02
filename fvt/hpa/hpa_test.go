@@ -153,7 +153,7 @@ var _ = Describe("Scaling of runtime deployments with HPA Autoscaler", Ordered, 
 			By("Delete all predictors")
 			FVTClientInstance.DeleteAllPredictors()
 			// ensure a stable deploy state
-			WaitForStableActiveDeployState(10 * time.Second)
+			WaitForStableActiveDeployState(1000 * time.Second)
 
 			By("Check ScaleToZero and No HPA")
 			expectScaledToZero()

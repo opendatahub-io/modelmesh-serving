@@ -96,8 +96,8 @@ if [[ ! -d $MANIFESTS_DIR/fvt ]] || [[ ${force} == "true" ]];then
   cp -R $ODH_MANIFESTS_DIR/${target_modelmesh_dir}/odh-modelmesh-controller/dependencies/* $MANIFESTS_DIR/fvt/.
   # Convert imaes to use quay.io image (avoid dockerhub pull limit)
   minio_tag=$(grep kserve/modelmesh-minio-dev-examples opendatahub/scripts/manifests/fvt/fvt.yaml |cut -d: -f3)
-  sed "s+kserve/modelmesh-minio-dev-examples:${minio_tag}+quay.io/jooholee/modelmesh-minio-dev-examples:${minio_tag}+g" -i opendatahub/scripts/manifests/fvt/fvt.yaml
-  sed "s+kserve/modelmesh-minio-examples:${minio_tag}+quay.io/jooholee/modelmesh-minio-examples:${minio_tag}+g" -i opendatahub/scripts/manifests/fvt/fvt.yaml
+  sed "s+kserve/modelmesh-minio-dev-examples:${minio_tag}+quay.io/rh-ee-allausas/modelmesh-minio-dev-examples:${minio_tag}+g" -i opendatahub/scripts/manifests/fvt/fvt.yaml
+  sed "s+kserve/modelmesh-minio-examples:${minio_tag}+quay.io/rh-ee-allausas/modelmesh-minio-examples:${minio_tag}+g" -i opendatahub/scripts/manifests/fvt/fvt.yaml
   sed 's+ubuntu+quay.io/fedora/fedora:38+g' -i opendatahub/scripts/manifests/fvt/fvt.yaml
 fi
 

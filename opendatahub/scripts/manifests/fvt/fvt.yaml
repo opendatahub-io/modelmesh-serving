@@ -135,6 +135,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: "models-pvc-1"
 spec:
+  storageClassName: nfs
   accessModes:
     - ReadWriteMany
   resources:
@@ -146,6 +147,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: "models-pvc-2"
 spec:
+  storageClassName: nfs
   accessModes:
     - ReadWriteMany
   resources:
@@ -157,6 +159,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: "models-pvc-3"
 spec:
+  storageClassName: nfs
   accessModes:
     - ReadWriteMany
   resources:

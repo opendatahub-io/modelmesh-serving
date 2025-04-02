@@ -10,7 +10,7 @@ img_name=
 img_url=
 mm_user=opendatahub-io
 mm_branch=main
-odhoperator=false
+odhoperator=true
 repo_uri=local
 stable_manifests=false
 

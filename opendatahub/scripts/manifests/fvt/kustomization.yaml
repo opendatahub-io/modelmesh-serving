@@ -4,4 +4,4 @@ resources:
 - fvt.yaml
 patchesStrategicMerge:
 - remove_etcd_patch.yaml
-namespace: model-serving
+namespace: modelmesh-serving

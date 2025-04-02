@@ -6,7 +6,7 @@ source "$(dirname "$0")/utils.sh"
 set -Eeuo pipefail
 
 namespace=modelmesh-serving
-ctrlnamespace=${namespace}
+ctrlnamespace=opendatahub
 tag=none
 force=false
 img_map=none
@@ -129,6 +129,7 @@ oc get ns nfs-provisioner|| $SCRIPT_DIR/deploy_nfs_provisioner.sh nfs-provisione
 info ".. Creating a namespace for fvt test"
 oc get ns $namespace || oc new-project $namespace #for openshift-ci
 oc project $namespace || echo "ignored this due to openshift-ci"
+oc apply -f $MANIFESTS_DIR/mm-configmap.yaml -n $namespace 
 
 # Download images on each node
 echo "* Download Images on Nodes"

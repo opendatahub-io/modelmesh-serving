@@ -90,7 +90,7 @@ const (
 	SecretKind                 = "Secret"
 	DefaultTestNamespace       = "modelmesh-serving"
 	DefaultTestServiceName     = "modelmesh-serving"
-	DefaultControllerNamespace = "modelmesh-serving"
+	DefaultControllerNamespace = "opendatahub"
 	UserConfigMapName          = "model-serving-config"
 	SamplesPath                = "predictors/"
 	IsvcSamplesPath            = "isvcs/"

@@ -33,6 +33,7 @@ var _ = Describe("Scaling of runtime deployments with HPA Autoscaler", Ordered, 
 	testPredictorObject := NewPredictorForFVT("mlserver-sklearn-predictor.yaml")
 	// runtime expected to serve the test predictor
 	expectedRuntimeName := "mlserver-1.x"
+	serviceAccountName := "modelmesh-serving-sa"
 
 	// checkDeploymentState returns the replicas value for the expected runtime
 	// and expects others to be scaled to zero
@@ -124,6 +125,7 @@ var _ = Describe("Scaling of runtime deployments with HPA Autoscaler", Ordered, 
 		srAnnotations[constants.AutoscalerClass] = string(constants.AutoscalerClassHPA)
 
 		FVTClientInstance.SetServingRuntimeAnnotation(expectedRuntimeName, srAnnotations)
+		FVTClientInstance.EnsureServiceAccount(serviceAccountName)
 	})
 
 	BeforeEach(func() {

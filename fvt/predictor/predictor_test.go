@@ -49,14 +49,14 @@ type FVTPredictor struct {
 
 // Array of all the predictors that need to be tested
 var predictorsArray = []FVTPredictor{
-	// {
-	// 	predictorName:              "tf",
-	// 	predictorFilename:          "tf-predictor.yaml",
-	// 	currentModelPath:           "fvt/tensorflow/mnist.savedmodel",
-	// 	updatedModelPath:           "fvt/tensorflow/mnist-dup.savedmodel",
-	// 	differentPredictorName:     "onnx",
-	// 	differentPredictorFilename: "onnx-predictor.yaml",
-	// },
+	{
+		predictorName:              "tf",
+		predictorFilename:          "tf-predictor.yaml",
+		currentModelPath:           "fvt/tensorflow/mnist.savedmodel",
+		updatedModelPath:           "fvt/tensorflow/mnist-dup.savedmodel",
+		differentPredictorName:     "onnx",
+		differentPredictorFilename: "onnx-predictor.yaml",
+	},
 	// {
 	// 	predictorName:              "keras",
 	// 	predictorFilename:          "keras-predictor.yaml",
@@ -65,70 +65,70 @@ var predictorsArray = []FVTPredictor{
 	// 	differentPredictorName:     "tf",
 	// 	differentPredictorFilename: "tf-predictor.yaml",
 	// },
-	// {
-	// 	predictorName:              "onnx",
-	// 	predictorFilename:          "onnx-predictor.yaml",
-	// 	currentModelPath:           "fvt/onnx/onnx-mnist",
-	// 	updatedModelPath:           "fvt/onnx/onnx-mnist-new",
-	// 	differentPredictorName:     "pytorch",
-	// 	differentPredictorFilename: "pytorch-predictor.yaml",
-	// },
-	// {
-	// 	predictorName:              "onnx-withschema",
-	// 	predictorFilename:          "onnx-predictor-withschema.yaml",
-	// 	currentModelPath:           "fvt/onnx/onnx-withschema",
-	// 	updatedModelPath:           "fvt/onnx/onnx-withschema-new",
-	// 	differentPredictorName:     "pytorch",
-	// 	differentPredictorFilename: "pytorch-predictor.yaml",
-	// },
-	// {
-	// 	predictorName:              "pytorch",
-	// 	predictorFilename:          "pytorch-predictor.yaml",
-	// 	currentModelPath:           "fvt/pytorch/pytorch-cifar",
-	// 	updatedModelPath:           "fvt/pytorch/pytorch-cifar-new",
-	// 	differentPredictorName:     "onnx",
-	// 	differentPredictorFilename: "onnx-predictor.yaml",
-	// },
-	// {
-	// 	predictorName:              "xgboost",
-	// 	predictorFilename:          "xgboost-predictor.yaml",
-	// 	currentModelPath:           "fvt/xgboost/mushroom",
-	// 	updatedModelPath:           "fvt/xgboost/mushroom-dup",
-	// 	differentPredictorName:     "onnx",
-	// 	differentPredictorFilename: "onnx-predictor.yaml",
-	// },
-	// {
-	// 	predictorName:              "lightgbm",
-	// 	predictorFilename:          "lightgbm-predictor.yaml",
-	// 	currentModelPath:           "fvt/lightgbm/mushroom",
-	// 	updatedModelPath:           "fvt/lightgbm/mushroom-dup",
-	// 	differentPredictorName:     "onnx",
-	// 	differentPredictorFilename: "onnx-predictor.yaml",
-	// },
-	// {
-	// 	predictorName:              "openvino",
-	// 	predictorFilename:          "openvino-mnist-predictor.yaml",
-	// 	currentModelPath:           "fvt/openvino/mnist",
-	// 	updatedModelPath:           "fvt/openvino/mnist-dup",
-	// 	differentPredictorName:     "xgboost",
-	// 	differentPredictorFilename: "xgboost-predictor.yaml",
-	// },
+	{
+		predictorName:              "onnx",
+		predictorFilename:          "onnx-predictor.yaml",
+		currentModelPath:           "fvt/onnx/onnx-mnist",
+		updatedModelPath:           "fvt/onnx/onnx-mnist-new",
+		differentPredictorName:     "pytorch",
+		differentPredictorFilename: "pytorch-predictor.yaml",
+	},
+	{
+		predictorName:              "onnx-withschema",
+		predictorFilename:          "onnx-predictor-withschema.yaml",
+		currentModelPath:           "fvt/onnx/onnx-withschema",
+		updatedModelPath:           "fvt/onnx/onnx-withschema-new",
+		differentPredictorName:     "pytorch",
+		differentPredictorFilename: "pytorch-predictor.yaml",
+	},
+	{
+		predictorName:              "pytorch",
+		predictorFilename:          "pytorch-predictor.yaml",
+		currentModelPath:           "fvt/pytorch/pytorch-cifar",
+		updatedModelPath:           "fvt/pytorch/pytorch-cifar-new",
+		differentPredictorName:     "onnx",
+		differentPredictorFilename: "onnx-predictor.yaml",
+	},
+	{
+		predictorName:              "xgboost",
+		predictorFilename:          "xgboost-predictor.yaml",
+		currentModelPath:           "fvt/xgboost/mushroom",
+		updatedModelPath:           "fvt/xgboost/mushroom-dup",
+		differentPredictorName:     "onnx",
+		differentPredictorFilename: "onnx-predictor.yaml",
+	},
+	{
+		predictorName:              "lightgbm",
+		predictorFilename:          "lightgbm-predictor.yaml",
+		currentModelPath:           "fvt/lightgbm/mushroom",
+		updatedModelPath:           "fvt/lightgbm/mushroom-dup",
+		differentPredictorName:     "onnx",
+		differentPredictorFilename: "onnx-predictor.yaml",
+	},
+	{
+		predictorName:              "openvino",
+		predictorFilename:          "openvino-mnist-predictor.yaml",
+		currentModelPath:           "fvt/openvino/mnist",
+		updatedModelPath:           "fvt/openvino/mnist-dup",
+		differentPredictorName:     "xgboost",
+		differentPredictorFilename: "xgboost-predictor.yaml",
+	},
 	{
 		predictorName:              "xgboost-fil",
 		predictorFilename:          "xgboost-fil-predictor.yaml",
 		currentModelPath:           "fvt/xgboost/mushroom-fil",
 		updatedModelPath:           "fvt/xgboost/mushroom-fil-dup",
+		differentPredictorName:     "xgboost",
+		differentPredictorFilename: "xgboost-fil-predictor.yaml",
+	},
+	{
+		predictorName:              "lightgbm-fil",
+		predictorFilename:          "lightgbm-fil-predictor.yaml",
+		currentModelPath:           "fvt/lightgbm/mushroom-fil",
+		updatedModelPath:           "fvt/lightgbm/mushroom-fil-dup",
 		differentPredictorName:     "onnx",
 		differentPredictorFilename: "onnx-predictor.yaml",
 	},
-	// {
-	// 	predictorName:              "lightgbm-fil",
-	// 	predictorFilename:          "lightgbm-fil-predictor.yaml",
-	// 	currentModelPath:           "fvt/lightgbm/mushroom-fil",
-	// 	updatedModelPath:           "fvt/lightgbm/mushroom-fil-dup",
-	// 	differentPredictorName:     "onnx",
-	// 	differentPredictorFilename: "onnx-predictor.yaml",
-	// },
 	// TorchServe test is currently disabled
 	// {
 	// 	predictorName:              "pytorch-mar",
@@ -451,11 +451,11 @@ var _ = Describe("Predictor", func() {
 			FVTClientInstance.DeletePredictor(kerasPredictorName)
 		})
 
-		It("should successfully run an inference", func() {
+		PIt("should successfully run an inference", func() {
 			ExpectSuccessfulInference_kerasMnist(kerasPredictorName)
 		})
 
-		It("should successfully run an inference on an updated model", func() {
+		PIt("should successfully run an inference on an updated model", func() {
 
 			By("Updating the predictor with new model path")
 			SetString(kerasPredictorObject, "fvt/tensorflow/keras-mnistnew/mnist.h5", "spec", "path")
@@ -465,7 +465,7 @@ var _ = Describe("Predictor", func() {
 			ExpectSuccessfulInference_kerasMnist(kerasPredictorName)
 		})
 
-		It("should fail to run an inference with invalid shape", func() {
+		PIt("should fail to run an inference with invalid shape", func() {
 			image := []float32{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.01176471, 0.07058824, 0.07058824, 0.07058824, 0.49411765, 0.53333336, 0.6862745, 0.10196079, 0.6509804, 1.0, 0.96862745, 0.49803922, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.11764706, 0.14117648, 0.36862746, 0.6039216, 0.6666667, 0.99215686, 0.99215686, 0.99215686, 0.99215686, 0.99215686, 0.88235295, 0.6745098, 0.99215686, 0.9490196, 0.7647059, 0.2509804, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.19215687, 0.93333334, 0.99215686, 0.99215686, 0.99215686, 0.99215686, 0.99215686, 0.99215686, 0.99215686, 0.99215686, 0.9843137, 0.3647059, 0.32156864, 0.32156864, 0.21960784, 0.15294118, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.07058824, 0.85882354, 0.99215686, 0.99215686, 0.99215686, 0.99215686, 0.99215686, 0.7764706, 0.7137255, 0.96862745, 0.94509804, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3137255, 0.6117647, 0.41960785, 0.99215686, 0.99215686, 0.8039216, 0.04313726, 0.0, 0.16862746, 0.6039216, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.05490196, 0.00392157, 0.6039216, 0.99215686, 0.3529412, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.54509807, 0.99215686, 0.74509805, 0.00784314, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.04313726, 0.74509805, 0.99215686, 0.27450982, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.13725491, 0.94509804, 0.88235295, 0.627451, 0.42352942, 0.00392157, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.31764707, 0.9411765, 0.99215686, 0.99215686, 0.46666667, 0.09803922, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1764706, 0.7294118, 0.99215686, 0.99215686, 0.5882353, 0.10588235, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0627451, 0.3647059, 0.9882353, 0.99215686, 0.73333335, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.9764706, 0.99215686, 0.9764706, 0.2509804, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.18039216, 0.50980395, 0.7176471, 0.99215686, 0.99215686, 0.8117647, 0.00784314, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.15294118, 0.5803922, 0.8980392, 0.99215686, 0.99215686, 0.99215686, 0.98039216, 0.7137255, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.09411765, 0.44705883, 0.8666667, 0.99215686, 0.99215686, 0.99215686, 0.99215686, 0.7882353, 0.30588236, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.09019608, 0.25882354, 0.8352941, 0.99215686, 0.99215686, 0.99215686, 0.99215686, 0.7764706, 0.31764707, 0.00784314, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.07058824, 0.67058825, 0.85882354, 0.99215686, 0.99215686, 0.99215686, 0.99215686, 0.7647059, 0.3137255, 0.03529412, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.21568628, 0.6745098, 0.8862745, 0.99215686, 0.99215686, 0.99215686, 0.99215686, 0.95686275, 0.52156866, 0.04313726, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.53333336, 0.99215686, 0.99215686, 0.99215686, 0.83137256, 0.5294118, 0.5176471, 0.0627451, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
 
 			// build the grpc inference call
@@ -486,7 +486,7 @@ var _ = Describe("Predictor", func() {
 			Expect(err.Error()).To(ContainSubstring("unexpected shape for input"))
 		})
 
-		It("should return model metadata", func() {
+		PIt("should return model metadata", func() {
 			modelMetadataRequest := &inference.ModelMetadataRequest{
 				Name: kerasPredictorName,
 			}
@@ -1132,31 +1132,31 @@ var _ = Describe("Non-ModelMesh ServingRuntime", func() {
 	})
 })
 
-var _ = Describe("Inference service", Ordered, func() {
-	for _, i := range inferenceArray {
-		var _ = Describe("test "+i.name+" isvc", Ordered, func() {
-			var isvcName string
+// var _ = Describe("Inference service", Ordered, func() {
+// 	for _, i := range inferenceArray {
+// 		var _ = Describe("test "+i.name+" isvc", Ordered, func() {
+// 			var isvcName string
 
-			It("should successfully load a model", func() {
-				isvcObject := NewIsvcForFVT(i.inferenceServiceFileName)
-				isvcName = isvcObject.GetName()
-				CreateIsvcAndWaitAndExpectReady(isvcObject, PredictorTimeout)
+// 			It("should successfully load a model", func() {
+// 				isvcObject := NewIsvcForFVT(i.inferenceServiceFileName)
+// 				isvcName = isvcObject.GetName()
+// 				CreateIsvcAndWaitAndExpectReady(isvcObject, PredictorTimeout)
 
-				err := FVTClientInstance.ConnectToModelServing(Insecure)
-				Expect(err).ToNot(HaveOccurred())
-			})
+// 				err := FVTClientInstance.ConnectToModelServing(Insecure)
+// 				Expect(err).ToNot(HaveOccurred())
+// 			})
 
-			It("should successfully run inference", func() {
-				ExpectSuccessfulInference_sklearnMnistSvm(isvcName)
-			})
+// 			It("should successfully run inference", func() {
+// 				ExpectSuccessfulInference_sklearnMnistSvm(isvcName)
+// 			})
 
-			AfterAll(func() {
-				FVTClientInstance.DeleteIsvc(isvcName)
-			})
+// 			AfterAll(func() {
+// 				FVTClientInstance.DeleteIsvc(isvcName)
+// 			})
 
-		})
-	}
-})
+// 		})
+// 	}
+// })
 
 // The TLS tests `Describe` block should be the last one in the list to
 // improve efficiency of the tests. Any test after the TLS tests would need

@@ -40,6 +40,9 @@ COPY generated/ generated/
 COPY pkg/ pkg/
 COPY version /etc/modelmesh-version
 # Copy the go.mod and sum and download dependencies
+
+USER root
+
 COPY go.mod go.mod
 COPY go.sum go.sum
 RUN go mod download

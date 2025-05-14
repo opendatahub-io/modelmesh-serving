@@ -32,7 +32,7 @@ images:
   newTag: "2022.3"
 - name: torchserve-0
   newName: pytorch/torchserve
-  newTag: 0.7.1-cpu
+  newTag: 0.12.0-cpu
 
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization

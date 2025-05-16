@@ -12,10 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 resources:
-  - manager.yaml
+- manager.yaml
 
-images:
-  - name: modelmesh-controller
-    newName: kserve/modelmesh-controller
     ## NOTE THIS SHOULD BE REPLACED WITH LATEST CONTROLLER IMAGE TAG
-    newTag: latest
+images:
+- name: modelmesh-controller
+  newName: kserve/modelmesh-controller
+  newTag: latest
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization

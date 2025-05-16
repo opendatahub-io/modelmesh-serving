@@ -253,7 +253,45 @@ var (
 		Version:  "v2",
 		Resource: "horizontalpodautoscalers", // this must be the plural form
 	}
+	gvrServiceAccount = schema.GroupVersionResource{
+		Group:    "",
+		Version:  "v1",
+		Resource: "serviceaccounts",
+	}
 )
+
+func (fvt *FVTClient) CreateServiceAccountExpectSuccess(name string) *unstructured.Unstructured {
+	sa := &unstructured.Unstructured{
+		Object: map[string]interface{}{
+			"apiVersion": "v1",
+			"kind":       "ServiceAccount",
+			"metadata": map[string]interface{}{
+				"name":      name,
+				"namespace": fvt.namespace,
+			},
+		},
+	}
+
+	obj, err := fvt.Resource(gvrServiceAccount).Namespace(fvt.namespace).Create(context.TODO(), sa, metav1.CreateOptions{})
+
+	Expect(err).ToNot(HaveOccurred())
+	Expect(obj).ToNot(BeNil())
+	Expect(obj.GetKind()).To(Equal("ServiceAccount"))
+
+	return obj
+}
+
+func (fvt *FVTClient) EnsureServiceAccount(name string) *unstructured.Unstructured {
+	obj, err := fvt.Resource(gvrServiceAccount).Namespace(fvt.namespace).Get(context.TODO(), name, metav1.GetOptions{})
+
+	if err == nil {
+		// already exists, return it
+		return obj
+	}
+
+	// create it if not found
+	return fvt.CreateServiceAccountExpectSuccess(name)
+}
 
 func (fvt *FVTClient) CreatePredictorExpectSuccess(resource *unstructured.Unstructured) *unstructured.Unstructured {
 	obj, err := fvt.Resource(gvrPredictor).Namespace(fvt.namespace).Create(context.TODO(), resource, metav1.CreateOptions{})

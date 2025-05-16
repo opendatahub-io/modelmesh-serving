@@ -6,7 +6,7 @@ source "$(dirname "$0")/utils.sh"
 set -Eeuo pipefail
 
 namespace=modelmesh-serving
-ctrlnamespace=${namespace}
+ctrlnamespace=opendatahub
 tag=none
 force=false
 img_map=none
@@ -96,8 +96,8 @@ if [[ ! -d $MANIFESTS_DIR/fvt ]] || [[ ${force} == "true" ]];then
   cp -R $ODH_MANIFESTS_DIR/${target_modelmesh_dir}/odh-modelmesh-controller/dependencies/* $MANIFESTS_DIR/fvt/.
   # Convert imaes to use quay.io image (avoid dockerhub pull limit)
   minio_tag=$(grep kserve/modelmesh-minio-dev-examples opendatahub/scripts/manifests/fvt/fvt.yaml |cut -d: -f3)
-  sed "s+kserve/modelmesh-minio-dev-examples:${minio_tag}+quay.io/jooholee/modelmesh-minio-dev-examples:${minio_tag}+g" -i opendatahub/scripts/manifests/fvt/fvt.yaml
-  sed "s+kserve/modelmesh-minio-examples:${minio_tag}+quay.io/jooholee/modelmesh-minio-examples:${minio_tag}+g" -i opendatahub/scripts/manifests/fvt/fvt.yaml
+  sed "s+kserve/modelmesh-minio-dev-examples:${minio_tag}+quay.io/rh-ee-allausas/modelmesh-minio-dev-examples:${minio_tag}+g" -i opendatahub/scripts/manifests/fvt/fvt.yaml
+  sed "s+kserve/modelmesh-minio-examples:${minio_tag}+quay.io/rh-ee-allausas/modelmesh-minio-examples:${minio_tag}+g" -i opendatahub/scripts/manifests/fvt/fvt.yaml
   sed 's+ubuntu+quay.io/fedora/fedora:38+g' -i opendatahub/scripts/manifests/fvt/fvt.yaml
 fi
 
@@ -129,6 +129,7 @@ oc get ns nfs-provisioner|| $SCRIPT_DIR/deploy_nfs_provisioner.sh nfs-provisione
 info ".. Creating a namespace for fvt test"
 oc get ns $namespace || oc new-project $namespace #for openshift-ci
 oc project $namespace || echo "ignored this due to openshift-ci"
+oc apply -f $MANIFESTS_DIR/mm-configmap.yaml -n $namespace 
 
 # Download images on each node
 echo "* Download Images on Nodes"
@@ -168,5 +169,22 @@ oc get clusterrolebinding "${namespace}"-modelmesh-serving-sa-auth-delegator || 
 
 # Create a SA "prometheus-ns-access" becuase odh-model-controller create rolebinding "prometheus-ns-access" with the SA where namespaces have modelmesh-enabled=true label
 oc get sa prometheus-ns-access -n "${namespace}" || oc create sa prometheus-ns-access -n "${namespace}"
+
+cat <<EOF | oc apply -f -
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-all
+  namespace: modelmesh-serving
+spec:
+  podSelector: {} 
+  ingress:
+  - {}  
+  egress:
+  - {}  
+  policyTypes:
+  - Ingress
+  - Egress
+EOF
 
 success "[SUCCESS] Ready to do fvt test"

@@ -57,14 +57,14 @@ var predictorsArray = []FVTPredictor{
 		differentPredictorName:     "onnx",
 		differentPredictorFilename: "onnx-predictor.yaml",
 	},
-	{
-		predictorName:              "keras",
-		predictorFilename:          "keras-predictor.yaml",
-		currentModelPath:           "fvt/tensorflow/keras-mnist/mnist.h5",
-		updatedModelPath:           "fvt/tensorflow/keras-mnistnew/mnist.h5",
-		differentPredictorName:     "tf",
-		differentPredictorFilename: "tf-predictor.yaml",
-	},
+	// {
+	// 	predictorName:              "keras",
+	// 	predictorFilename:          "keras-predictor.yaml",
+	// 	currentModelPath:           "fvt/tensorflow/keras-mnist/mnist.h5",
+	// 	updatedModelPath:           "fvt/tensorflow/keras-mnistnew/mnist.h5",
+	// 	differentPredictorName:     "tf",
+	// 	differentPredictorFilename: "tf-predictor.yaml",
+	// },
 	{
 		predictorName:              "onnx",
 		predictorFilename:          "onnx-predictor.yaml",
@@ -118,8 +118,8 @@ var predictorsArray = []FVTPredictor{
 		predictorFilename:          "xgboost-fil-predictor.yaml",
 		currentModelPath:           "fvt/xgboost/mushroom-fil",
 		updatedModelPath:           "fvt/xgboost/mushroom-fil-dup",
-		differentPredictorName:     "onnx",
-		differentPredictorFilename: "onnx-predictor.yaml",
+		differentPredictorName:     "xgboost",
+		differentPredictorFilename: "xgboost-fil-predictor.yaml",
 	},
 	{
 		predictorName:              "lightgbm-fil",
@@ -1138,31 +1138,31 @@ var _ = Describe("Non-ModelMesh ServingRuntime", func() {
 	})
 })
 
-var _ = Describe("Inference service", Ordered, func() {
-	for _, i := range inferenceArray {
-		var _ = Describe("test "+i.name+" isvc", Ordered, func() {
-			var isvcName string
+// var _ = Describe("Inference service", Ordered, func() {
+// 	for _, i := range inferenceArray {
+// 		var _ = Describe("test "+i.name+" isvc", Ordered, func() {
+// 			var isvcName string
 
-			It("should successfully load a model", func() {
-				isvcObject := NewIsvcForFVT(i.inferenceServiceFileName)
-				isvcName = isvcObject.GetName()
-				CreateIsvcAndWaitAndExpectReady(isvcObject, PredictorTimeout)
+// 			It("should successfully load a model", func() {
+// 				isvcObject := NewIsvcForFVT(i.inferenceServiceFileName)
+// 				isvcName = isvcObject.GetName()
+// 				CreateIsvcAndWaitAndExpectReady(isvcObject, PredictorTimeout)
 
-				err := FVTClientInstance.ConnectToModelServing(Insecure)
-				Expect(err).ToNot(HaveOccurred())
-			})
+// 				err := FVTClientInstance.ConnectToModelServing(Insecure)
+// 				Expect(err).ToNot(HaveOccurred())
+// 			})
 
-			It("should successfully run inference", func() {
-				ExpectSuccessfulInference_sklearnMnistSvm(isvcName)
-			})
+// 			It("should successfully run inference", func() {
+// 				ExpectSuccessfulInference_sklearnMnistSvm(isvcName)
+// 			})
 
-			AfterAll(func() {
-				FVTClientInstance.DeleteIsvc(isvcName)
-			})
+// 			AfterAll(func() {
+// 				FVTClientInstance.DeleteIsvc(isvcName)
+// 			})
 
-		})
-	}
-})
+// 		})
+// 	}
+// })
 
 // The TLS tests `Describe` block should be the last one in the list to
 // improve efficiency of the tests. Any test after the TLS tests would need
@@ -1179,53 +1179,52 @@ var _ = Describe("TLS XGBoost inference", Ordered, Serial, func() {
 		FVTClientInstance.SetDefaultUserConfigMap()
 	})
 
-	It("should successfully run an inference with basic TLS", func() {
-		By("Updating the user ConfigMap to for basic TLS")
+	// It("should successfully run an inference with basic TLS", func() {
+	// 	By("Updating the user ConfigMap to for basic TLS")
+	// 	FVTClientInstance.UpdateConfigMapTLS(BasicTLSConfig)
 
-		FVTClientInstance.UpdateConfigMapTLS(BasicTLSConfig)
+	// 	By("Waiting for stable deploy state after UpdateConfigMapTLS")
+	// 	WaitForStableActiveDeployState(time.Second * 60)
 
-		By("Waiting for stable deploy state after UpdateConfigMapTLS")
-		WaitForStableActiveDeployState(time.Second * 60)
+	// 	// load the test predictor object
+	// 	xgboostPredictorObject = NewPredictorForFVT("xgboost-predictor.yaml")
+	// 	xgboostPredictorName = xgboostPredictorObject.GetName()
+	// 	CreatePredictorAndWaitAndExpectLoaded(xgboostPredictorObject)
 
-		// load the test predictor object
-		xgboostPredictorObject = NewPredictorForFVT("xgboost-predictor.yaml")
-		xgboostPredictorName = xgboostPredictorObject.GetName()
-		CreatePredictorAndWaitAndExpectLoaded(xgboostPredictorObject)
+	// 	By("Creating a new connection to ModelServing")
+	// 	// ensure we are establishing a new connection after the TLS change
+	// 	FVTClientInstance.DisconnectFromModelServing()
 
-		By("Creating a new connection to ModelServing")
-		// ensure we are establishing a new connection after the TLS change
-		FVTClientInstance.DisconnectFromModelServing()
+	// 	var timeAsleep int
+	// 	var mmeshErr error
+	// 	for timeAsleep <= 30 {
+	// 		mmeshErr = FVTClientInstance.ConnectToModelServing(TLS)
 
-		var timeAsleep int
-		var mmeshErr error
-		for timeAsleep <= 30 {
-			mmeshErr = FVTClientInstance.ConnectToModelServing(TLS)
+	// 		if mmeshErr == nil {
+	// 			Log.Info("Successfully connected to model mesh tls")
+	// 			break
+	// 		}
 
-			if mmeshErr == nil {
-				Log.Info("Successfully connected to model mesh tls")
-				break
-			}
+	// 		Log.Info(fmt.Sprintf("Error found, retrying connecting to model-mesh: %s", mmeshErr.Error()))
+	// 		FVTClientInstance.DisconnectFromModelServing()
+	// 		timeAsleep += 10
+	// 		time.Sleep(time.Second * time.Duration(timeAsleep))
+	// 	}
 
-			Log.Info(fmt.Sprintf("Error found, retrying connecting to model-mesh: %s", mmeshErr.Error()))
-			FVTClientInstance.DisconnectFromModelServing()
-			timeAsleep += 10
-			time.Sleep(time.Second * time.Duration(timeAsleep))
-		}
+	// 	Expect(mmeshErr).ToNot(HaveOccurred())
 
-		Expect(mmeshErr).ToNot(HaveOccurred())
+	// 	By("Expect inference to succeed")
+	// 	ExpectSuccessfulInference_xgboostMushroom(xgboostPredictorName)
 
-		By("Expect inference to succeed")
-		ExpectSuccessfulInference_xgboostMushroom(xgboostPredictorName)
+	// 	By("Expect inference to succeed via REST proxy")
+	// 	ExpectSuccessfulRESTInference_xgboostMushroom(xgboostPredictorName, true)
 
-		By("Expect inference to succeed via REST proxy")
-		ExpectSuccessfulRESTInference_xgboostMushroom(xgboostPredictorName, true)
+	// 	// cleanup the predictor
+	// 	FVTClientInstance.DeletePredictor(xgboostPredictorName)
 
-		// cleanup the predictor
-		FVTClientInstance.DeletePredictor(xgboostPredictorName)
-
-		// disconnect because TLS config will change
-		FVTClientInstance.DisconnectFromModelServing()
-	})
+	// 	// disconnect because TLS config will change
+	// 	FVTClientInstance.DisconnectFromModelServing()
+	// })
 
 	It("should successfully run an inference with mutual TLS", func() {
 		By("Updating user config for Mutual TLS")

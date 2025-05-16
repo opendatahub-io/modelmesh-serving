@@ -10,7 +10,7 @@ img_name=
 img_url=
 mm_user=opendatahub-io
 mm_branch=main
-odhoperator=false
+odhoperator=true
 repo_uri=local
 stable_manifests=false
 
@@ -117,7 +117,7 @@ if [[ ${odhoperator} == "true" ]]; then
   done
   info ".. Opendatahub operator is ready"
   info ".. Creating the DSC in ${ctrlnamespace}"
-  oc apply -n ${ctrlnamespace} -f "${MANIFESTS_DIR}/dsc.yaml"
+  oc apply -n ${ctrlnamespace} -f "${MANIFESTS_DIR}/dsc.yaml" 
 else
   info ".. Archiving odh-manifests"
   archive_root_folder="/tmp"
@@ -160,7 +160,7 @@ else
   info "$(cat ${PARAMS})"
 
   # info "installing namespaced rbac"
-  kustomize build "${archive_folder}"/config/rbac/namespace-scope | oc apply -n "${ctrlnamespace}" -f -
+  kustomize build "${archive_folder}"/config/rbac/namespace-scope | oc apply -n modelmesh-serving  f -
 
   # we want mm namespaced
   kustomize build "${archive_folder}"/config/namespace-runtimes  | oc apply -n "${ctrlnamespace}" -f -

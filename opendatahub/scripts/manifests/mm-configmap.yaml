@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: model-serving-config
+data:
+  config.yaml: |
+    #Sample config overrides
+    inferenceServiceName: "modelmesh-serving"
+    inferenceServicePort: 8033
+    podsPerRuntime: 2
+    metrics:
+      enabled: true
+    restProxy:
+      enabled: true
+    runtimePodLabels:
+      app: myApp
+      network-policy: allow-ingress
+    runtimePodAnnotations:
+      app: myApp

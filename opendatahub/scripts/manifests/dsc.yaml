@@ -1,15 +1,38 @@
+kind: DSCInitialization
+apiVersion: dscinitialization.opendatahub.io/v1
+metadata:
+  labels:
+    app.kubernetes.io/created-by: opendatahub-operator
+    app.kubernetes.io/instance: default
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: dscinitialization
+    app.kubernetes.io/part-of: opendatahub-operator
+  name: default-dsci
+spec:
+  applicationsNamespace: opendatahub
+  monitoring:
+    managementState: Managed
+    namespace: opendatahub
+  serviceMesh:
+    controlPlane:
+      metricsCollection: Istio
+      name: data-science-smcp
+      namespace: istio-system
+    managementState: Removed
+  trustedCABundle:
+    customCABundle: ''
+    managementState: Managed
+---
 apiVersion: datasciencecluster.opendatahub.io/v1
 kind: DataScienceCluster
 metadata:
-  finalizers:
-    - datasciencecluster.opendatahub.io/finalizer
   labels:
-    app.kubernetes.io/created-by: rhods-operator
-    app.kubernetes.io/instance: rhods
+    app.kubernetes.io/created-by: opendatahub-operator
+    app.kubernetes.io/instance: default
     app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/name: datasciencecluster
-    app.kubernetes.io/part-of: rhods-operator
-  name: rhods
+    app.kubernetes.io/part-of: opendatahub-operator
+  name: default-dsc
 spec:
   components:
     codeflare:
@@ -24,17 +47,9 @@ spec:
         ingressGateway:
           certificate:
             type: SelfSigned
-        managementState: Managed
+        managementState: Removed
         name: knative-serving
     modelmeshserving:
-      devFlags:
-        manifests:
-          - contextDir: config
-            sourcePath: overlays/odh
-            uri: "https://github.com/opendatahub-io/modelmesh-serving/tarball/main"
-          - contextDir: config
-            sourcePath: ""
-            uri: "https://github.com/VedantMahabaleshwarkar/odh-model-controller/tarball/monitoringnsdisable_test"
       managementState: Managed
     ray:
       managementState: Removed

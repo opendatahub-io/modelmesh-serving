@@ -261,7 +261,8 @@ install_binaries() {
 
   KUSTOMIZE_VERSION=5.2.1
   if type kustomize &> /dev/null; then
-    if [ "v${KUSTOMIZE_VERSION}" =  $(kustomize version) ]; then
+    INSTALLED_KUSTOMIZE_VERSION=$(kustomize version | grep -o 'v[0-9]\+\.[0-9]\+\.[0-9]\+')
+    if [ "v${KUSTOMIZE_VERSION}" = "$INSTALLED_KUSTOMIZE_VERSION" ]; then
       info "kustomize already installed with correct version..."
     else
       install_kustomize "${KUSTOMIZE_VERSION}"

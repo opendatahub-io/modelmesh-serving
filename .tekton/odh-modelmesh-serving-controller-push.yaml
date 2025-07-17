@@ -288,7 +288,8 @@ spec:
         value: $(params.TARGETARCH)
       - name: BUILD_ARGS
         value:
-        - [TARGETOS=$(TARGETOS), TARGETARCH=$(TARGETARCH)]
+        - "TARGETOS=$(params.TARGETOS)"
+        - "TARGETARCH=$(params.TARGETARCH)"
       - name: BUILD_ARGS_FILE
         value: $(params.build-args-file)
       - name: PRIVILEGED_NESTED
@@ -339,7 +340,11 @@ spec:
         value: $(params.TARGETARCH)
       - name: BUILD_ARGS
         value:
-        - [DEV_IMAGE=$(DEV_IMAGE), IMAGE_VERSION=$(IMAGE_VERSION), COMMIT_SHA=$(COMMIT_SHA), TARGETOS=$(TARGETOS), TARGETARCH=$(TARGETARCH)]
+        - "DEV_IMAGE=$(params.DEV_IMAGE)"
+        - "IMAGE_VERSION=$(params.IMAGE_VERSION)"
+        - "COMMIT_SHA=$(params.COMMIT_SHA)"
+        - "TARGETOS=$(params.TARGETOS)"
+        - "TARGETARCH=$(params.TARGETARCH)"
       - name: BUILD_ARGS_FILE
         value: $(params.build-args-file)
       - name: PRIVILEGED_NESTED

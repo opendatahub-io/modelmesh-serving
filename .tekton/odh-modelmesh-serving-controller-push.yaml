@@ -279,7 +279,7 @@ spec:
       - name: IMAGE
         value: $(params.output-dev-image)
       - name: DOCKERFILE
-        value: Dockerfile.develop.ci
+        value: Dockerfile.develop
       - name: CONTEXT
         value: $(params.path-context)
       - name: HERMETIC

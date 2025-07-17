@@ -22,12 +22,22 @@ spec:
     value: '{{source_url}}'
   - name: revision
     value: '{{revision}}'
+  - name: odh-tag
+    value: odh-v2.32
+  - name: output-dev-image
+    value: quay.io/opendatahub/modelmesh-controller:dev-${odh-tag}
   - name: output-image
-    value: quay.io/opendatahub/modelmesh-controller:odh-v2.32
+    value: quay.io/opendatahub/modelmesh-controller:${odh-tag}
+  - name: devdockerfile
+    value: Dockerfile.develop
   - name: dockerfile
     value: Dockerfile
   - name: path-context
     value: .
+  - name:  TARGETOS
+    value: linux
+  - name: TARGETARCH
+    value: x86_64
   pipelineSpec:
     description: |
       This pipeline is ideal for building container images from a Containerfile while maintaining trust after pipeline customization.
@@ -256,10 +266,63 @@ spec:
         workspace: git-auth
       - name: netrc
         workspace: netrc
-    - name: build-container
+    - name: build-dev-container
       params:
       - name: IMAGE
+        value: $(params.output-dev-image)
+      - name: DOCKERFILE
+        value: $(params.devdockerfile)
+      - name: CONTEXT
+        value: $(params.path-context)
+      - name: HERMETIC
+        value: $(params.hermetic)
+      - name: PREFETCH_INPUT
+        value: $(params.prefetch-input)
+      - name: IMAGE_EXPIRES_AFTER
+        value: $(params.image-expires-after)
+      - name: COMMIT_SHA
+        value: $(tasks.clone-repository.results.commit)
+      - name:  TARGETOS
+        value: $(params.TARGETOS)
+      - name: TARGETARCH
+        value: $(params.TARGETARCH)
+      - name: BUILD_ARGS
+        value:
+      - name: BUILD_ARGS
+        value:
+        - [TARGETOS=$(TARGETOS), TARGETARCH=$(TARGETARCH)]
+      - name: BUILD_ARGS_FILE
+        value: $(params.build-args-file)
+      - name: PRIVILEGED_NESTED
+        value: $(params.privileged-nested)
+      - name: SOURCE_ARTIFACT
+        value: $(tasks.prefetch-dependencies.results.SOURCE_ARTIFACT)
+      - name: CACHI2_ARTIFACT
+        value: $(tasks.prefetch-dependencies.results.CACHI2_ARTIFACT)
+      runAfter:
+      - prefetch-dependencies
+      taskRef:
+        params:
+        - name: name
+          value: buildah-oci-ta
+        - name: bundle
+          value: quay.io/konflux-ci/tekton-catalog/task-buildah-oci-ta:0.4@sha256:b91b634c32b7fd98dbfc4cdbc0a97d7694997fd49ceebabf34c2535fd47f84a2
+        - name: kind
+          value: task
+        resolver: bundles
+      when:
+      - input: $(tasks.init.results.build)
+        operator: in
+        values:
+        - "true"
+    - name: build-container
+      params:
+      - name: DEV_IMAGE
+        value: $(params.output-dev-image)
+      - name: IMAGE
         value: $(params.output-image)
+      - name: IMAGE_VERSION
+        value: $(params.odh-tag)
       - name: DOCKERFILE
         value: $(params.dockerfile)
       - name: CONTEXT
@@ -272,9 +335,13 @@ spec:
         value: $(params.image-expires-after)
       - name: COMMIT_SHA
         value: $(tasks.clone-repository.results.commit)
+      - name:  TARGETOS
+        value: $(params.TARGETOS)
+      - name: TARGETARCH
+        value: $(params.TARGETARCH)
       - name: BUILD_ARGS
         value:
-        - $(params.build-args[*])
+        - [DEV_IMAGE=$(DEV_IMAGE), IMAGE_VERSION=$(IMAGE_VERSION), COMMIT_SHA=$(COMMIT_SHA), TARGETOS=$(TARGETOS), TARGETARCH=$(TARGETARCH)]
       - name: BUILD_ARGS_FILE
         value: $(params.build-args-file)
       - name: PRIVILEGED_NESTED
@@ -285,6 +352,7 @@ spec:
         value: $(tasks.prefetch-dependencies.results.CACHI2_ARTIFACT)
       runAfter:
       - prefetch-dependencies
+      - build-dev-container
       taskRef:
         params:
         - name: name

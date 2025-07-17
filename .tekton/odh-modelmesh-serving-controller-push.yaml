@@ -25,9 +25,9 @@ spec:
   - name: odh-tag
     value: odh-v2.32
   - name: output-dev-image
-    value: quay.io/opendatahub/modelmesh-controller:dev-$(odh-tag)
+    value: quay.io/opendatahub/modelmesh-controller:dev-$(params.odh-tag)
   - name: output-image
-    value: quay.io/opendatahub/modelmesh-controller:$(odh-tag)
+    value: quay.io/opendatahub/modelmesh-controller:$(params.odh-tag)
   - name: dev-dockerfile
     value: Dockerfile.develop
   - name: dockerfile

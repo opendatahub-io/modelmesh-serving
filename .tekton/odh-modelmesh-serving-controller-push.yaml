@@ -25,10 +25,10 @@ spec:
   - name: odh-tag
     value: odh-v2.32
   - name: output-dev-image
-    value: quay.io/opendatahub/modelmesh-controller:dev-${odh-tag}
+    value: quay.io/opendatahub/modelmesh-controller:dev-$(odh-tag)
   - name: output-image
-    value: quay.io/opendatahub/modelmesh-controller:${odh-tag}
-  - name: devdockerfile
+    value: quay.io/opendatahub/modelmesh-controller:$(odh-tag)
+  - name: dev-dockerfile
     value: Dockerfile.develop
   - name: dockerfile
     value: Dockerfile
@@ -271,7 +271,7 @@ spec:
       - name: IMAGE
         value: $(params.output-dev-image)
       - name: DOCKERFILE
-        value: $(params.devdockerfile)
+        value: $(params.dev-dockerfile)
       - name: CONTEXT
         value: $(params.path-context)
       - name: HERMETIC
@@ -286,8 +286,6 @@ spec:
         value: $(params.TARGETOS)
       - name: TARGETARCH
         value: $(params.TARGETARCH)
-      - name: BUILD_ARGS
-        value:
       - name: BUILD_ARGS
         value:
         - [TARGETOS=$(TARGETOS), TARGETARCH=$(TARGETARCH)]

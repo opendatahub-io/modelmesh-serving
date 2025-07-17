@@ -24,10 +24,8 @@ spec:
     value: '{{revision}}'
   - name: odh-tag
     value: odh-v2.32
-  - name: output-dev-image
-    value: quay.io/opendatahub/modelmesh-controller:dev-$(params.odh-tag)
-  - name: output-image
-    value: quay.io/opendatahub/modelmesh-controller:$(params.odh-tag)
+  - name: output-image-base
+    value: quay.io/opendatahub/modelmesh-controller
   - name: dockerfile
     value: Dockerfile
   - name: path-context
@@ -82,13 +80,10 @@ spec:
       description: Revision of the Source Repository
       name: revision
       type: string
-    - description: Fully Qualified Output Image for the final build
-      name: output-image
+    - description: Base URL for the output image (e.g., quay.io/namespace/image)
+      name: output-image-base
       type: string
-    - description: Fully Qualified Output Image for the development build
-      name: output-dev-image
-      type: string
-    - description: Tag for the images
+    - description: Tag for the images (e.g., v1.0.0)
       name: odh-tag
       type: string
     - default: .
@@ -203,7 +198,7 @@ spec:
     - name: init
       params:
       - name: image-url
-        value: $(params.output-image)
+        value: "$(params.output-image-base):$(params.odh-tag)"
       - name: rebuild
         value: $(params.rebuild)
       - name: skip-checks
@@ -226,7 +221,7 @@ spec:
       - name: revision
         value: $(params.revision)
       - name: ociStorage
-        value: $(params.output-image).git
+        value: "$(params.output-image-base):$(params.odh-tag).git"
       - name: ociArtifactExpiresAfter
         value: $(params.image-expires-after)
       runAfter:
@@ -255,7 +250,7 @@ spec:
       - name: SOURCE_ARTIFACT
         value: $(tasks.clone-repository.results.SOURCE_ARTIFACT)
       - name: ociStorage
-        value: $(params.output-image).prefetch
+        value: "$(params.output-image-base):$(params.odh-tag).prefetch"
       - name: ociArtifactExpiresAfter
         value: $(params.image-expires-after)
       runAfter:
@@ -277,7 +272,7 @@ spec:
     - name: build-develop-container
       params:
       - name: IMAGE
-        value: $(params.output-dev-image)
+        value: "$(params.output-image-base):dev-$(params.odh-tag)"
       - name: DOCKERFILE
         value: Dockerfile.develop
       - name: CONTEXT
@@ -320,7 +315,7 @@ spec:
     - name: build-container
       params:
       - name: IMAGE
-        value: $(params.output-image)
+        value: "$(params.output-image-base):$(params.odh-tag)"
       - name: DOCKERFILE
         value: $(params.dockerfile)
       - name: CONTEXT
@@ -365,7 +360,7 @@ spec:
     - name: build-image-index
       params:
       - name: IMAGE
-        value: $(params.output-image)
+        value: "$(params.output-image-base):$(params.odh-tag)"
       - name: COMMIT_SHA
         value: $(tasks.clone-repository.results.commit)
       - name: IMAGE_EXPIRES_AFTER
@@ -395,7 +390,7 @@ spec:
     - name: build-source-image
       params:
       - name: BINARY_IMAGE
-        value: $(params.output-image)
+        value: "$(params.output-image-base):$(params.odh-tag)"
       - name: SOURCE_ARTIFACT
         value: $(tasks.prefetch-dependencies.results.SOURCE_ARTIFACT)
       - name: CACHI2_ARTIFACT
@@ -539,7 +534,7 @@ spec:
       - name: image-url
         value: $(tasks.build-image-index.results.IMAGE_URL)
       - name: IMAGE
-        value: $(params.output-image)
+        value: "$(params.output-image-base):$(params.odh-tag)"
       - name: DOCKERFILE
         value: $(params.dockerfile)
       - name: CONTEXT

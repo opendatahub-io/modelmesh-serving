@@ -28,16 +28,10 @@ spec:
     value: quay.io/opendatahub/modelmesh-controller:dev-$(params.odh-tag)
   - name: output-image
     value: quay.io/opendatahub/modelmesh-controller:$(params.odh-tag)
-  - name: dev-dockerfile
-    value: Dockerfile.develop
   - name: dockerfile
     value: Dockerfile
   - name: path-context
     value: .
-  - name:  TARGETOS
-    value: linux
-  - name: TARGETARCH
-    value: x86_64
   pipelineSpec:
     description: |
       This pipeline is ideal for building container images from a Containerfile while maintaining trust after pipeline customization.
@@ -88,8 +82,14 @@ spec:
       description: Revision of the Source Repository
       name: revision
       type: string
-    - description: Fully Qualified Output Image
+    - description: Fully Qualified Output Image for the final build
       name: output-image
+      type: string
+    - description: Fully Qualified Output Image for the development build
+      name: output-dev-image
+      type: string
+    - description: Tag for the images
+      name: odh-tag
       type: string
     - default: .
       description: Path to the source code of an application's component from where
@@ -141,6 +141,14 @@ spec:
       description: Whether to enable privileged mode, should be used only with remote
         VMs
       name: privileged-nested
+      type: string
+    - default: "linux"
+      description: "Target OS for the build"
+      name: TARGETOS
+      type: string
+    - default: "amd64"
+      description: "Target architecture for the build"
+      name: TARGETARCH
       type: string
     results:
     - description: ""
@@ -266,12 +274,12 @@ spec:
         workspace: git-auth
       - name: netrc
         workspace: netrc
-    - name: build-dev-container
+    - name: build-develop-container
       params:
       - name: IMAGE
         value: $(params.output-dev-image)
       - name: DOCKERFILE
-        value: $(params.dev-dockerfile)
+        value: Dockerfile.develop.ci
       - name: CONTEXT
         value: $(params.path-context)
       - name: HERMETIC
@@ -282,14 +290,9 @@ spec:
         value: $(params.image-expires-after)
       - name: COMMIT_SHA
         value: $(tasks.clone-repository.results.commit)
-      - name:  TARGETOS
-        value: $(params.TARGETOS)
-      - name: TARGETARCH
-        value: $(params.TARGETARCH)
       - name: BUILD_ARGS
         value:
-        - "TARGETOS=$(params.TARGETOS)"
-        - "TARGETARCH=$(params.TARGETARCH)"
+        - $(params.build-args[*])
       - name: BUILD_ARGS_FILE
         value: $(params.build-args-file)
       - name: PRIVILEGED_NESTED
@@ -316,12 +319,8 @@ spec:
         - "true"
     - name: build-container
       params:
-      - name: DEV_IMAGE
-        value: $(params.output-dev-image)
       - name: IMAGE
         value: $(params.output-image)
-      - name: IMAGE_VERSION
-        value: $(params.odh-tag)
       - name: DOCKERFILE
         value: $(params.dockerfile)
       - name: CONTEXT
@@ -332,17 +331,11 @@ spec:
         value: $(params.prefetch-input)
       - name: IMAGE_EXPIRES_AFTER
         value: $(params.image-expires-after)
-      - name: COMMIT_SHA
-        value: $(tasks.clone-repository.results.commit)
-      - name:  TARGETOS
-        value: $(params.TARGETOS)
-      - name: TARGETARCH
-        value: $(params.TARGETARCH)
       - name: BUILD_ARGS
         value:
-        - "DEV_IMAGE=$(params.DEV_IMAGE)"
-        - "IMAGE_VERSION=$(params.IMAGE_VERSION)"
-        - "COMMIT_SHA=$(params.COMMIT_SHA)"
+        - "DEV_IMAGE=$(tasks.build-develop-container.results.IMAGE_URL)@$(tasks.build-develop-container.results.IMAGE_DIGEST)"
+        - "IMAGE_VERSION=$(params.odh-tag)"
+        - "COMMIT_SHA=$(tasks.clone-repository.results.commit)"
         - "TARGETOS=$(params.TARGETOS)"
         - "TARGETARCH=$(params.TARGETARCH)"
       - name: BUILD_ARGS_FILE
@@ -354,8 +347,7 @@ spec:
       - name: CACHI2_ARTIFACT
         value: $(tasks.prefetch-dependencies.results.CACHI2_ARTIFACT)
       runAfter:
-      - prefetch-dependencies
-      - build-dev-container
+      - build-develop-container
       taskRef:
         params:
         - name: name
@@ -383,6 +375,7 @@ spec:
       - name: IMAGES
         value:
         - $(tasks.build-container.results.IMAGE_URL)@$(tasks.build-container.results.IMAGE_DIGEST)
+        - $(tasks.build-develop-container.results.IMAGE_URL)@$(tasks.build-develop-container.results.IMAGE_DIGEST)
       runAfter:
       - build-container
       taskRef:

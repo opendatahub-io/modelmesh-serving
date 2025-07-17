@@ -370,7 +370,6 @@ spec:
       - name: IMAGES
         value:
         - $(tasks.build-container.results.IMAGE_URL)@$(tasks.build-container.results.IMAGE_DIGEST)
-        - $(tasks.build-develop-container.results.IMAGE_URL)@$(tasks.build-develop-container.results.IMAGE_DIGEST)
       runAfter:
       - build-container
       taskRef:

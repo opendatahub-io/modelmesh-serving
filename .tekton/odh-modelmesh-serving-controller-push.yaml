@@ -23,7 +23,7 @@ spec:
   - name: revision
     value: '{{revision}}'
   - name: odh-tag
-    value: odh-v2.33
+    value: odh-v2.34
   - name: output-image-base
     value: quay.io/opendatahub/modelmesh-controller
   - name: dockerfile

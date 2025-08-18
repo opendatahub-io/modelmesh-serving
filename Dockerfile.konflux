@@ -1,0 +1,59 @@
+###############################################################################
+# Stage 1: Build assets
+###############################################################################
+FROM registry.access.redhat.com/ubi9/go-toolset:1.23@sha256:381fb72f087a07432520fa93364f66b5981557f1dd708f3c4692d6d0a76299b3 AS build
+
+ARG TARGETOS=linux
+ARG TARGETARCH=amd64
+
+LABEL image="build"
+
+# Copy the go sources
+COPY main.go main.go
+COPY apis/ apis/
+COPY controllers/ controllers/
+COPY generated/ generated/
+COPY pkg/ pkg/
+COPY version /etc/modelmesh-version
+
+USER root
+
+COPY go.mod go.mod
+COPY go.sum go.sum
+RUN go mod download
+
+# Build using native go compiler from BUILDPLATFORM but compiled output for TARGETPLATFORM
+RUN GOOS=${TARGETOS:-linux} \
+    GOARCH=${TARGETARCH:-amd64} \
+    CGO_ENABLED=1 \
+    GO111MODULE=on \
+    GOEXPERIMENT=strictfipsruntime    go build -tags strictfipsruntime -a -o /workspace/manager main.go
+
+###############################################################################
+# Stage 2: Copy build assets to create the smallest final runtime image
+###############################################################################
+#ubi-minimal:latest
+FROM registry.access.redhat.com/ubi9/ubi-minimal@sha256:8d905a93f1392d4a8f7fb906bd49bf540290674b28d82de3536bb4d0898bf9d7 AS runtime
+
+ARG USER=2000
+ARG IMAGE_VERSION
+ARG COMMIT_SHA
+
+LABEL com.redhat.component="odh-modelmesh-serving-controller-container" \
+      name="managed-open-data-hub/odh-modelmesh-serving-controller-rhel8" \
+      description="Manages lifecycle of ModelMesh Serving Custom Resources and associated Kubernetes resources" \
+      summary="odh-modelmesh-serving-controller" \
+      maintainer="['managed-open-data-hub@redhat.com']" \
+      io.openshift.expose-services="" \
+      io.k8s.display-name="modelmesh-serving-controller" \
+      io.k8s.description="modelmesh-serving-controller" \
+      com.redhat.license_terms="https://www.redhat.com/licenses/Red_Hat_Standard_EULA_20191108.pdf"
+
+USER ${USER}
+
+WORKDIR /
+COPY --from=build /workspace/manager .
+
+COPY config/internal config/internal
+
+ENTRYPOINT ["/manager"]

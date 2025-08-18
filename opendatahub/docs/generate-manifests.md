@@ -1,7 +1,6 @@
 # How to use gen scripts
 
 There are 3 gen scripts to support generating new manifests.
-
 - [gen_odh_model_manifests.sh](../scripts/gen_odh_model_manifests.sh)
 - [gen_odh_modelmesh_manifests.sh](../scripts/gen_odh_modelmesh_manifests.sh)
 - [gen_copy_new_manifests.sh](../scripts/gen_copy_new_manifests.h)

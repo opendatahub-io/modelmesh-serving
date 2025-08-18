@@ -175,7 +175,7 @@ spec:
       restartPolicy: OnFailure
       containers:
         - name: "copy-pod"
-          image: kserve/modelmesh-minio-examples:latest
+          image: kserve/modelmesh-minio-dev-examples:latest
           securityContext:
             allowPrivilegeEscalation: false
           command: ["/bin/sh", "-ex", "-c"]
@@ -226,7 +226,7 @@ metadata:
 spec:
   containers:
     - name: main
-      image: ubuntu
+      image: quay.io/fedora/fedora:38
       command: ["/bin/sh", "-ec", "sleep 10000"]
       volumeMounts:
         - name: "pvc1"

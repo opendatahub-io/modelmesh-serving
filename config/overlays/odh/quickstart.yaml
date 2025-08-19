@@ -49,7 +49,7 @@ spec:
             defaultMode: 0554
       initContainers:
         - name: etcd-secret-creator
-          image: registry.redhat.io/openshift4/ose-cli@sha256:4cfb4219f46c8cc25a5e567fd4cb8babe9a3778b0b86a1e354a3403994ef3677
+          image: $(ose-cli)
           command: ["/bin/bash", "-c", "--"]
           args:
             - |

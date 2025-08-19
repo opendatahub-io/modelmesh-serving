@@ -62,6 +62,13 @@ vars:
     apiVersion: v1
     kind: ConfigMap
     name: mesh-parameters
+- fieldref:
+    fieldPath: data.ose-cli
+  name: ose-cli
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: mesh-parameters
 
 
 

@@ -92,7 +92,7 @@ spec:
             - http://0.0.0.0:2379
             - "--data-dir"
             - /tmp/etcd.data
-          image: $(ose-etcd)
+          image: $(etcd)
           name: etcd
           env:
             - name: ROOT_PASSWORD

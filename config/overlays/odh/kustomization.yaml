@@ -56,8 +56,8 @@ vars:
     kind: ConfigMap
     name: mesh-parameters
 - fieldref:
-    fieldPath: data.ose-etcd
-  name: ose-etcd
+    fieldPath: data.etcd
+  name: etcd
   objref:
     apiVersion: v1
     kind: ConfigMap

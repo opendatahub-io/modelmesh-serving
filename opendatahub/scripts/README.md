@@ -19,7 +19,7 @@ manifests are the part that deploys the components required for fvt (functional 
 
 ## Scripts
 
-The scripts in this folder help you run fvt tests or compare odh manifests. However, it is not recommended to use these scripts directly without familiarizing yourself with them. [This doc has make examples](../docs/makefile_-cheatsheet.md) of using these scripts in a makefile here.
+The scripts in this folder help you run fvt tests or compare odh manifests. However, it is not recommended to use these scripts directly without familiarizing yourself with them. [This doc has make examples](../docs/makefile-cheatsheet.md) of using these scripts in a makefile here.
 
 - [env.sh](./env.sh)
 

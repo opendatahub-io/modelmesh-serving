@@ -49,8 +49,9 @@ import (
 )
 
 const (
-	commonLabelValue   = "modelmesh-controller"
-	serviceMonitorName = "modelmesh-metrics-monitor"
+	commonLabelValue        = "modelmesh-controller"
+	serviceMonitorName      = "modelmesh-metrics-monitor"
+	rhoaiObservabilityLabel = "monitoring.opendatahub.io/scrape"
 )
 
 // This is a map in preparation for multi-namespace support
@@ -347,6 +348,9 @@ func (r *ServiceReconciler) reconcileServiceMonitor(ctx context.Context, metrics
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      serviceMonitorName,
 			Namespace: owner.GetNamespace(),
+			Labels: map[string]string{
+				rhoaiObservabilityLabel: "true",
+			},
 		},
 	}
 

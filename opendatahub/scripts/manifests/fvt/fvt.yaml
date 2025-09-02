@@ -53,7 +53,7 @@ spec:
             - /tmp/etcd.data
           # image: quay.io/coreos/etcd:v3.5.4
           # Tag -> registry.access.redhat.com/rhel7/etcd:3.2.32-34
-          image: registry.redhat.io/openshift4/ose-etcd@sha256:d3275cd886d13865937d225d8138db7f6b7bf59ac1a94d9fbe61e35286bee6ff
+          image: registry.redhat.io/openshift4/ose-etcd-rhel9@sha256:ea7545b79599f3868d442fdffdfe9b12a02a4b56ac155f02c0fac4720d475796
           name: etcd
           ports:
             - containerPort: 2379

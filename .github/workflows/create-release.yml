@@ -4,8 +4,18 @@ on:
   workflow_dispatch:
     inputs:
       tag_name:
-        description: 'Tag name for the new release'
+        description: 'New release tag (e.g., odh-v2.35)'
         required: true
+        type: string
+      next_odh_tag:
+        description: 'Next development tag (e.g., odh-v2.36)'
+        required: true
+        type: string
+    #
+    # Note: This workflow assumes the release tag and image tags are in sync.
+    #       'tag_name' is used to create the release and as the value to find in files.
+    #       'next_odh_tag' provides the new value to set.
+    #
 
 permissions:
   contents: write
@@ -101,3 +111,42 @@ jobs:
           files: bin/*
           generate_release_notes: true
           name: ${{ github.event.inputs.tag_name }}
+
+  bump-odh-tag:
+    name: Bump ODH Tag for Next Release
+    runs-on: ubuntu-latest
+    needs: changelog
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Update odh-modelmesh-serving-controller-push.yaml with next ODH tag
+        run: |
+          CURRENT_TAG="${{ github.event.inputs.tag_name }}"
+          NEXT_TAG="${{ github.event.inputs.next_odh_tag }}"
+          
+          echo "Updating ODH tag from $CURRENT_TAG to $NEXT_TAG..."
+          
+          # Using sed to replace the current ODH tag with the next one,
+          # anchored to the 'value: ' line to prevent over-matching.
+          sed -i "s|value: ${CURRENT_TAG}|value: ${NEXT_TAG}|g" .tekton/odh-modelmesh-serving-controller-push.yaml
+
+          echo "Update complete."
+          
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.email "github-actions@github.com"
+          git config --global user.name "GitHub Actions"
+          git add .tekton/odh-modelmesh-serving-controller-push.yaml
+          
+          # Check for changes before committing
+          if [[ -z "$(git status --porcelain)" ]]; then
+            echo "No changes to commit. Exiting."
+          else
+            git commit -m "chore(konflux): Bump ODH release tag to ${{ github.event.inputs.next_odh_tag }}"
+            git push
+          fi

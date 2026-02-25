@@ -77,18 +77,18 @@ vi model-mesh_templates/base/params.env
 # Generate new manfiests
 cd $SYNC_HOME/modelmesh-serving/
 opendatahub/scripts/gen_odh_modelmesh_manifests.sh -n -c
-opendatahub/scripts/gen_odh_model_manifests.sh 
+opendatahub/scripts/gen_odh_model_manifests.sh
 opendatahub/scripts/gen_copy_new_manifests.sh
 
 # MANUAL TASK: Update model-mesh/model-mesh_templates to fix FVT test.
- 
-### FVT Test(with the new odh manifests) 
-TAG=fast CONTROLLERNAMESPACE=opendatahub NAMESPACE=modelmesh-serving FORCE=true make deploy-mm-for-odh 
-TAG=fast CONTROLLERNAMESPACE=opendatahub NAMESPACE=modelmesh-serving FORCE=true make deploy-fvt-for-odh 
+
+### FVT Test(with the new odh manifests)
+TAG=fast CONTROLLERNAMESPACE=opendatahub NAMESPACE=modelmesh-serving FORCE=true make deploy-mm-for-odh
+TAG=fast CONTROLLERNAMESPACE=opendatahub NAMESPACE=modelmesh-serving FORCE=true make deploy-fvt-for-odh
 TAG=fast CONTROLLERNAMESPACE=opendatahub NAMESPACE=modelmesh-serving NAMESPACESCOPEMODE=true make repeat-fvt
 
 ### Cleanup (optional)
-CONTROLLERNAMESPACE=opendatahub NAMESPACE=modelmesh-serving  C_MM_CTRL_KFCTL=true C_MM_TEST=true make cleanup-for-odh 
+CONTROLLERNAMESPACE=opendatahub NAMESPACE=modelmesh-serving  C_MM_CTRL_KFCTL=true C_MM_TEST=true make cleanup-for-odh
 
 ### Once FVT pass, do the following
 rm -rf opendatahub/odh-manifests/model-mesh_ori
@@ -96,7 +96,7 @@ git add opendatahub/odh-manifests/model-mesh_templates
 git add opendatahub/odh-manifests/model-mesh
 
 git commit -s -m "Update ODH-MANIFEST(fast)"
-git push 
+git push
 
 # MANUAL TASK: Send a PR to opendatahub. Wait/Fix until openshift-ci pass all tests and merge your PR.
 ```
@@ -108,12 +108,13 @@ You only need to do this if you created a new release branch and it is ready to 
 Modelmesh enabled the auto merger. If the new release branch is ready for RHODS promotion, you should update [source_mapping.yaml file](https://github.com/red-hat-data-services/rhods-devops-infra/blob/main/src/config/source_map.yaml) to pont to the branch.
 
 Example:
+
 ```yaml
 - name: rest-proxy
-  automerge: 'yes'
+  automerge: "yes"
   src:
     url: https://github.com/opendatahub-io/rest-proxy.git
-    branch: release-v0.10.0   # <----- HERE
+    branch: release-v0.10.0 # <----- HERE
   dest:
     url: https://github.com/red-hat-data-services/rest-proxy.git
     branch: main

@@ -20,7 +20,7 @@ spec:
       namespace: istio-system
     managementState: Removed
   trustedCABundle:
-    customCABundle: ''
+    customCABundle: ""
     managementState: Managed
 ---
 apiVersion: datasciencecluster.opendatahub.io/v1

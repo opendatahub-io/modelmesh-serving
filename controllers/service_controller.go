@@ -227,7 +227,7 @@ func (r *ServiceReconciler) tlsConfigFromSecret(ctx context.Context, secretName 
 	if ok := certPool.AppendCertsFromPEM(cert); !ok {
 		return nil, errors.New("failed to append ca certs")
 	}
-	return &tls.Config{Certificates: []tls.Certificate{certificate}, RootCAs: certPool}, nil
+	return &tls.Config{Certificates: []tls.Certificate{certificate}, RootCAs: certPool, MinVersion: tls.VersionTLS12, NextProtos: []string{"h2"}}, nil
 }
 
 func (r *ServiceReconciler) reconcileService(ctx context.Context, mms *mmesh.MMService,

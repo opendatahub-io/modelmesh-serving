@@ -264,6 +264,7 @@ func newMmClient(ctx context.Context, mmeshEndpoint string, tlsConfig *tls.Confi
 	if tlsConfig == nil {
 		dialOpts = append(dialOpts, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	} else {
+		tlsConfig.NextProtos = []string{"h2"}
 		tc := credentials.NewTLS(tlsConfig)
 		dialOpts = append(dialOpts, grpc.WithTransportCredentials(tc), grpc.WithAuthority(serviceName))
 	}

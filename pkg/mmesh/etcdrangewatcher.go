@@ -301,6 +301,8 @@ func getEtcdClientConfig(etcdConfig EtcdConfig, secretData map[string][]byte, lo
 		if tlsConfig.RootCAs == nil {
 			tlsConfig.RootCAs, _ = x509.SystemCertPool()
 		}
+		tlsConfig.MinVersion = tls.VersionTLS12
+		tlsConfig.NextProtos = []string{"h2"}
 		etcdClientConfig.TLS = &tlsConfig
 	}
 
